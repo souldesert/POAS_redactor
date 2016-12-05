@@ -22,6 +22,12 @@
             <version>4.4.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -38,7 +44,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>${basedir}/src/main/java/gui</directory>
+                <directory>${basedir}/src/main/java/redactorGui</directory>
                 <includes>
                     <include>**/*</include>
                 </includes>
