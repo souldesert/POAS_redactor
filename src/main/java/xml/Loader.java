@@ -22,23 +22,27 @@ public class Loader {
     public Loader() {
     }
 
-    public void load() {
+    public boolean load() {
         Stage loadStage = new Stage();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Открыть программу");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Программа Р-тран", "*.rtran"));
         File destination = fileChooser.showOpenDialog(loadStage);
-        JacksonXmlModule module = new JacksonXmlModule();
-        module.setDefaultUseWrapper(false);
-        XmlMapper xmlMapper = new XmlMapper(module);
-        try {
-            BufferedReader read = new BufferedReader(new FileReader(destination));
-            String program = read.readLine();
-            readed = xmlMapper.readValue(program, R_pro.class);
-        } catch (IOException e) {
-            System.out.println("I/O Error: " + e);
+        if (destination != null) {
+            JacksonXmlModule module = new JacksonXmlModule();
+            module.setDefaultUseWrapper(false);
+            XmlMapper xmlMapper = new XmlMapper(module);
+            try {
+                BufferedReader read = new BufferedReader(new FileReader(destination));
+                String program = read.readLine();
+                readed = xmlMapper.readValue(program, R_pro.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return true;
+        } else {
+            return false;
         }
-
     }
 
 }

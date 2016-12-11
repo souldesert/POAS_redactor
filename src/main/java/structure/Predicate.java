@@ -12,6 +12,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 @JacksonXmlRootElement(localName = "predicate")
 public class Predicate {
 
+    public Predicate() {
+    }
 
     @JacksonXmlProperty(isAttribute = true)
     String type;

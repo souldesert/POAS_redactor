@@ -1,13 +1,10 @@
 package structure;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.sun.javafx.collections.ImmutableObservableList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.immutables.value.Value;
 
 import java.util.List;
 
@@ -20,8 +17,15 @@ import java.util.List;
 @JacksonXmlRootElement(localName = "edge")
 public class Edge {
 
+    public String getEnd() {
+        return end;
+    }
+
     @JacksonXmlProperty(isAttribute = true)
     String end;
+
+    public Edge() {
+    }
 
     public Predicate getPredicate() {
         return predicate;
@@ -37,7 +41,7 @@ public class Edge {
     @JacksonXmlProperty
     ObservableList<Operation> operation = FXCollections.observableArrayList();     // массив
 
-    public void setOperation(List operation) {
+    public void setOperation(List<Operation> operation) {
         this.operation.addAll(operation);
     }
 

@@ -12,6 +12,9 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 @JacksonXmlRootElement(localName = "right")
 public class Right {
 
+    public Right() {
+    }
+
     public String getValue() {
         return value;
     }

@@ -64,44 +64,48 @@ public class RedactorModuleController {
     @FXML
     private void handleSave() {
         Saver saver = new Saver();
-        saver.save(redactorModule.getR_pro());
-        redactorModule.getPrimaryStage().setTitle(redactorModule.getR_pro().getProgname());
+        if(saver.save(redactorModule.getR_pro())) {
+            redactorModule.getPrimaryStage().setTitle(redactorModule.getR_pro().getProgname());
+        }
     }
 
     @FXML
     private void handleLoad() {
         Loader loader = new Loader();
-        loader.load();
-        R_pro readed = loader.getReaded();
-        redactorModule.updateR_pro(readed);
-        ObservableList<Command> readedCommands = FXCollections.observableArrayList();
-        Command currentCommand = new Command();
-        for (Arm arm : readed.getAlg().getArm()) {      // <- Почему не работает перебор массива??? Arm : ObservableList<Arm>
-            currentCommand.setMetka(arm.getBegin());
-            currentCommand.setFlag(Flags.TAG);
-            for (Edge edge : arm.getEdge()) {
-                String memoryLeft = edge.getPredicate().getMemoryLeft().getName();
-                String memoryRight = edge.getPredicate().getMemoryRight().getName();
-                String sign = edge.getPredicate().getSign();
-                currentCommand.setUslovie(memoryLeft + " " + sign + " " + memoryRight);
-                if (currentCommand.getFlag() != Flags.TAG) currentCommand.setFlag(Flags.CONDITION);
-                for (Operation operation : edge.getOperation()) {
-                    String left = operation.getLeft().getValue();
-                    String right = operation.getRight().getValue();
-                    String operator = operation.getOperator();
-                    currentCommand.setLinop(left + " " + operator + " " + right);
-                    if (currentCommand.getFlag() != Flags.TAG && currentCommand.getFlag() != Flags.CONDITION)
-                        currentCommand.setFlag(Flags.OPERATOR);
-                    readedCommands.add(currentCommand);
-                    currentCommand = new Command();
-
+        if (loader.load()) {
+            R_pro readed = loader.getReaded();
+            redactorModule.updateR_pro(readed);
+            ObservableList<Command> readedCommands = FXCollections.observableArrayList();
+            Command currentCommand = new Command();
+            for (Arm arm : readed.getAlg().getArm()) {
+                currentCommand.setMetka(arm.getBegin());
+                currentCommand.setFlag(Flags.TAG);
+                for (Edge edge : arm.getEdge()) {
+                    String memoryLeft = edge.getPredicate().getMemoryLeft().getName();
+                    String memoryRight = edge.getPredicate().getMemoryRight().getName();
+                    String sign = edge.getPredicate().getSign();
+                    currentCommand.setUslovie(memoryLeft + " " + sign + " " + memoryRight);
+                    if (currentCommand.getFlag() != Flags.TAG) currentCommand.setFlag(Flags.CONDITION);
+                    for (Operation operation : edge.getOperation()) {
+                        String left = operation.getLeft().getValue();
+                        String right = operation.getRight().getValue();
+                        String operator = operation.getOperator();
+                        currentCommand.setLinop(left + " " + operator + " " + right);
+                        if (currentCommand.getFlag() != Flags.TAG && currentCommand.getFlag() != Flags.CONDITION)
+                            currentCommand.setFlag(Flags.OPERATOR);
+                        readedCommands.add(currentCommand);
+                        currentCommand = new Command();
+                    }
+                    Command lastOperator = readedCommands.get(readedCommands.size() - 1);
+                    lastOperator.setMetkaPerehoda(edge.getEnd());
+                    readedCommands.remove(readedCommands.size() - 1);
+                    readedCommands.add(lastOperator);
                 }
+
             }
-//            readedCommands.add(currentCommand);
-//            currentCommand = new Command();
+            redactorModule.getCommandData().removeAll();
+            redactorModule.getCommandData().addAll(readedCommands);
         }
-        redactorModule.getCommandData().removeAll();
-        redactorModule.getCommandData().addAll(readedCommands);
     }
 
     /**
@@ -111,7 +115,5 @@ public class RedactorModuleController {
     private void handleExit() {
         System.exit(0);
     }
-
-
 
 }

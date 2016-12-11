@@ -1,15 +1,12 @@
 package structure;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.sun.javafx.collections.ImmutableObservableList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.immutables.value.Value;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Alex on 27.11.2016.
@@ -19,7 +16,7 @@ import java.util.List;
 @JacksonXmlRootElement(localName = "alg")
 public class Alg {
 
-    public void setArm(List arm) {
+    public void setArm(ArrayList<Arm> arm) {
         this.arm.addAll(arm);
     }
 

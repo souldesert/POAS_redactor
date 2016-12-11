@@ -29,6 +29,10 @@ public class R_pro {
         return alg;
     }
 
+    public void setAlg(Alg alg) {
+        this.alg = alg;
+    }
+
     @JacksonXmlProperty
     Alg alg;
 
