@@ -6,18 +6,20 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import structure.R_pro;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by Alex on 28.11.2016.
  */
 public class Loader {
 
-    R_pro r_pro;
+    public R_pro getReaded() {
+        return readed;
+    }
+
+    R_pro readed;
 
     public Loader() {
-        r_pro = new R_pro();
     }
 
     public void load() {
@@ -30,13 +32,12 @@ public class Loader {
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
         try {
-
-            xmlMapper.readValue(destination, R_pro.class);
+            BufferedReader read = new BufferedReader(new FileReader(destination));
+            String program = read.readLine();
+            readed = xmlMapper.readValue(program, R_pro.class);
         } catch (IOException e) {
             System.out.println("I/O Error: " + e);
         }
-
-        //System.out.println(r_pro.progname);
 
     }
 

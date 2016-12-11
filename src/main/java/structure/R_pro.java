@@ -25,6 +25,10 @@ public class R_pro {
     @JacksonXmlProperty
     Descriptive_part descriptive_part;
 
+    public Alg getAlg() {
+        return alg;
+    }
+
     @JacksonXmlProperty
     Alg alg;
 

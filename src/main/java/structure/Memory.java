@@ -15,6 +15,10 @@ public class Memory {
     @JacksonXmlProperty(isAttribute = true)
     String type;
 
+    public String getName() {
+        return name;
+    }
+
     @JacksonXmlProperty(isAttribute = true)
     String name;
 
@@ -26,6 +30,9 @@ public class Memory {
 
     @JacksonXmlProperty
     ColumnsName columnsName;
+
+    public Memory() {
+    }
 
     public Memory(String name) {
         this.name = name;

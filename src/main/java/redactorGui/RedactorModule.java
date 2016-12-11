@@ -1,5 +1,7 @@
 package redactorGui;
 
+import javafx.scene.Node;
+import javafx.scene.control.ButtonBar;
 import redactorGui.alphabets.alphabetRecord;
 import redactorGui.alphabets.alphabetsController;
 import redactorGui.memoryTypes.memoryTypeRecord;
@@ -27,6 +29,11 @@ public class RedactorModule extends Application {
     private Tab alphabetsTab;
     private Stage primaryStage;
     private BorderPane RootWindow;
+
+    public void setCommandData(ObservableList<Command> commandData) {
+        this.commandData = commandData;
+    }
+
     private ObservableList<Command> commandData = FXCollections.observableArrayList();
     private ObservableList<memoryTypeRecord> memoryTypesData = FXCollections.observableArrayList();
     private ObservableList<alphabetRecord> alphabetsData = FXCollections.observableArrayList();
