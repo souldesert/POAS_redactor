@@ -13,7 +13,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 public class Predicate {
 
 
-
     @JacksonXmlProperty(isAttribute = true)
     String type;
 
@@ -22,6 +21,18 @@ public class Predicate {
 
     @JacksonXmlProperty(isAttribute = true)
     String value;
+
+    public Memory getMemoryLeft() {
+        return memoryLeft;
+    }
+
+    public String getSign() {
+        return sign;
+    }
+
+    public Memory getMemoryRight() {
+        return memoryRight;
+    }
 
     @JacksonXmlProperty/*(localName = "memory")*/
     Memory memoryLeft;

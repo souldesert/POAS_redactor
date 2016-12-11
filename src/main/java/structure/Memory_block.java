@@ -1,10 +1,14 @@
 package structure;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.sun.javafx.collections.ImmutableObservableList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.util.List;
 
 /**
  * Created by Alex on 27.11.2016.
@@ -16,6 +20,10 @@ public class Memory_block {
 
     @JacksonXmlProperty
     ObservableList<Memory> memory = FXCollections.observableArrayList();           // массив
+
+    public void setMemory(List memory) {
+        this.memory.addAll(memory);
+    }
 
     public Memory_block() {
     }

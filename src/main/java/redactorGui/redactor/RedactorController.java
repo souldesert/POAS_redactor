@@ -1,14 +1,13 @@
 package redactorGui.redactor;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.*;
 import redactorGui.RedactorModule;
 import redactorGui.redactor.addNewLine.addNewLineController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -44,6 +43,7 @@ public class RedactorController {
     @FXML
     private TableColumn<Command, String> commentsColumn;
 
+
     private RedactorModule redactorModule;
 
     private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
@@ -61,6 +61,37 @@ public class RedactorController {
 
         commandTable.setRowFactory(ct -> {
             TableRow<Command> row = new TableRow<>();
+
+            final ContextMenu contextMenu = new ContextMenu();
+            MenuItem addAbove = new MenuItem("Добавить команду выше");
+            MenuItem addBelow = new MenuItem("Добавить команду ниже");
+
+            addAbove.setOnAction(event -> {
+
+                Command tempCommand = new Command();
+                boolean okClicked = showCommandEditDialog(tempCommand);
+                if(okClicked) {
+                    redactorModule.getCommandData().add(row.getIndex(), tempCommand);
+                }
+                R_pro updated = new R_pro("1.0", redactorModule.getR_pro().getProgname(), redactorModule.getDescriptive_part(), redactorModule.getAlg());
+                redactorModule.updateR_pro(updated);
+
+            });
+
+            addBelow.setOnAction(event -> {
+
+                Command tempCommand = new Command();
+                boolean okClicked = showCommandEditDialog(tempCommand);
+                if(okClicked) {
+                    redactorModule.getCommandData().add(row.getIndex() + 1, tempCommand);
+                }
+                R_pro updated = new R_pro("1.0", redactorModule.getR_pro().getProgname(), redactorModule.getDescriptive_part(), redactorModule.getAlg());
+                redactorModule.updateR_pro(updated);
+
+            });
+
+            contextMenu.getItems().addAll(addAbove, addBelow);
+            row.setContextMenu(contextMenu);
 
             row.setOnDragDetected(event -> {
                 if(!row.isEmpty()) {
