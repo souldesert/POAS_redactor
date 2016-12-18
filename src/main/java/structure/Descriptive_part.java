@@ -12,6 +12,14 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 @JacksonXmlRootElement(localName = "descriptive_part")
 public class Descriptive_part {
 
+    public Memory_block getMemory_block() {
+        return memory_block;
+    }
+
+    public Alphabet getAlphabet() {
+        return alphabet;
+    }
+
     @JacksonXmlProperty
     Memory_block memory_block;
 

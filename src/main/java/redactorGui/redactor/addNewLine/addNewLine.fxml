@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -10,9 +11,9 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="417.0" prefWidth="362.0" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="redactorGui.redactor.addNewLine.addNewLineController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="417.0" prefWidth="362.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="redactorGui.redactor.addNewLine.addNewLineController">
    <children>
-      <GridPane layoutX="25.0" layoutY="14.0" prefHeight="90.0" prefWidth="197.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+      <GridPane layoutX="25.0" layoutY="14.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -32,9 +33,9 @@
             <Label text="Комментарии" GridPane.rowIndex="4" />
             <TextField fx:id="metkaField" GridPane.columnIndex="1" />
             <TextArea fx:id="commentsArea" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="193.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <TextField fx:id="uslovieField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="linopField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="metkaPerehodaField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ComboBox fx:id="uslovieField" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <ButtonBar layoutX="148.0" layoutY="363.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">

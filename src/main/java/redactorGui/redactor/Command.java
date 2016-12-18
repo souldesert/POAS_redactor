@@ -19,6 +19,7 @@ public class Command {
     private final StringProperty metkaPerehoda;
     private final StringProperty comments;
     private Flags flag;
+    private PredicateTypes predicateType;
 
     /**
      * Конструктор по умолчанию.
@@ -117,5 +118,13 @@ public class Command {
 
     public void setFlag(Flags newFlag) { this.flag = newFlag; }
 
-    //@XmlJavaTypeAdapter(LocalDateAdapter.class)
+    // -------------------------------------------------------------------
+
+    public PredicateTypes getPredicateType() {
+        return predicateType;
+    }
+
+    public void setPredicateType(PredicateTypes predicateType) {
+        this.predicateType = predicateType;
+    }
 }

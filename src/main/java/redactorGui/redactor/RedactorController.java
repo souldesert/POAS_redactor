@@ -163,7 +163,9 @@ public class RedactorController {
 
             addNewLineController controller = loader.getController();
             controller.setDialogStage(dialogStage);
+            controller.setRedactorModule(redactorModule);
             controller.setCommand(command);
+            controller.loadOptions();
 
             dialogStage.showAndWait();
 

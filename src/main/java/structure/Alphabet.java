@@ -19,8 +19,12 @@ import java.util.List;
 @JacksonXmlRootElement(localName = "alphabet")
 public class Alphabet {
 
-    public void setAbc(List abc) {
+    public void setAbc(List<Abc> abc) {
         this.abc.addAll(abc);
+    }
+
+    public ObservableList<Abc> getAbc() {
+        return abc;
     }
 
     @JacksonXmlProperty

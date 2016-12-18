@@ -18,10 +18,14 @@ import java.util.List;
 @JacksonXmlRootElement(localName = "memory_block")
 public class Memory_block {
 
+    public ObservableList<Memory> getMemory() {
+        return memory;
+    }
+
     @JacksonXmlProperty
     ObservableList<Memory> memory = FXCollections.observableArrayList();           // массив
 
-    public void setMemory(List memory) {
+    public void setMemory(List<Memory> memory) {
         this.memory.addAll(memory);
     }
 

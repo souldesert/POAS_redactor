@@ -19,7 +19,12 @@ public class Memory {
         return name;
     }
 
+    public String getType() {
+        return type;
+    }
+
     @JacksonXmlProperty(isAttribute = true)
+
     String name;
 
     @JacksonXmlProperty(isAttribute = true)

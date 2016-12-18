@@ -7,6 +7,7 @@ import redactorGui.alphabets.alphabetsController;
 import redactorGui.memoryTypes.memoryTypeRecord;
 import redactorGui.memoryTypes.memoryTypesController;
 import redactorGui.redactor.Command;
+import redactorGui.redactor.PredicateTypes;
 import redactorGui.redactor.RedactorController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -213,6 +214,8 @@ public class RedactorModule extends Application {
         int curArm = -1;
         int curEdge = 0;
         for (Command record : commandData) {
+            String type;
+            Predicate predicate;
             switch (record.getFlag()) {
                 case TAG:
 
@@ -221,11 +224,41 @@ public class RedactorModule extends Application {
                     Right right = new Right(record.getLinop().split(" ")[2]);
                     Operation operation = new Operation(left, operator, right);
 
-                    String type = "expression";
-                    Memory memoryLeft = new Memory(record.getUslovie().split(" ")[0]);
-                    String sign = record.getUslovie().split(" ")[1];
-                    Memory memoryRight = new Memory(record.getUslovie().split(" ")[2]);
-                    Predicate predicate = new Predicate(type, memoryLeft, sign, memoryRight);
+                    switch (record.getPredicateType()) {
+                        case ALPHABET:
+                            type = "alphabet";
+                            predicate = new Predicate(type, record.getUslovie());
+                            break;
+                        case EXPRESSION:
+                            type = "expression";
+                            Memory memoryLeft = new Memory(record.getUslovie().split(" ")[0]);
+                            String sign = record.getUslovie().split(" ")[1];
+                            Memory memoryRight = new Memory(record.getUslovie().split(" ")[2]);
+                            predicate = new Predicate(type, memoryLeft, sign, memoryRight);
+                            break;
+                        case MEMORY:
+                            type = "memory";
+                            predicate = new Predicate(type, record.getUslovie());
+                            break;
+                        default:
+                            type = "string";
+                            predicate = new Predicate(type, record.getUslovie());
+                            break;
+                    }
+
+//                    if (record.getPredicateType() == PredicateTypes.EXPESSION) {
+//                        type = "expression";
+//                        Memory memoryLeft = new Memory(record.getUslovie().split(" ")[0]);
+//                        String sign = record.getUslovie().split(" ")[1];
+//                        Memory memoryRight = new Memory(record.getUslovie().split(" ")[2]);
+//                        predicate = new Predicate(type, memoryLeft, sign, memoryRight);
+//                    } else if (record.getPredicateType() == PredicateTypes.ALPHABET){
+//                        type = "alphabet";
+//                        predicate = new Predicate(type, record.getUslovie());
+//                    } else if (record.getPredicateType() == PredicateTypes.MEMORY) {
+//                        type = "memory";
+//                        predicate = new Predicate(type, record.getUslovie());
+//                    }
 
                     curEdge = 0;
 
@@ -248,11 +281,38 @@ public class RedactorModule extends Application {
                     right = new Right(record.getLinop().split(" ")[2]);
                     operation = new Operation(left, operator, right);
 
-                    type = "expression";
-                    memoryLeft = new Memory(record.getUslovie().split(" ")[0]);
-                    sign = record.getUslovie().split(" ")[1];
-                    memoryRight = new Memory(record.getUslovie().split(" ")[2]);
-                    predicate = new Predicate(type, memoryLeft, sign, memoryRight);
+                    switch (record.getPredicateType()) {
+                        case ALPHABET:
+                            type = "alphabet";
+                            predicate = new Predicate(type, record.getUslovie());
+                            break;
+                        case EXPRESSION:
+                            type = "expression";
+                            Memory memoryLeft = new Memory(record.getUslovie().split(" ")[0]);
+                            String sign = record.getUslovie().split(" ")[1];
+                            Memory memoryRight = new Memory(record.getUslovie().split(" ")[2]);
+                            predicate = new Predicate(type, memoryLeft, sign, memoryRight);
+                            break;
+                        case MEMORY:
+                            type = "memory";
+                            predicate = new Predicate(type, record.getUslovie());
+                            break;
+                        default:
+                            type = "string";
+                            predicate = new Predicate(type, record.getUslovie());
+                            break;
+                    }
+
+//                    if (record.getUslovie().contains(">") || record.getUslovie().contains("<") || record.getUslovie().contains("=")) {
+//                        type = "expression";
+//                        Memory memoryLeft = new Memory(record.getUslovie().split(" ")[0]);
+//                        String sign = record.getUslovie().split(" ")[1];
+//                        Memory memoryRight = new Memory(record.getUslovie().split(" ")[2]);
+//                        predicate = new Predicate(type, memoryLeft, sign, memoryRight);
+//                    } else {
+//                        type = "string";
+//                        predicate = new Predicate(type, record.getUslovie());
+//                    }
 
                     curEdge++;
 

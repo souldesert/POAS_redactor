@@ -15,7 +15,6 @@ import java.io.IOException;
  */
 public class Saver {
 
-    // TODO: 04.12.2016 разобраться с Exception'ами при отмене сохранения
     public boolean save(R_pro r_pro) {
         Stage saveStage = new Stage();
         FileChooser fileChooser = new FileChooser();

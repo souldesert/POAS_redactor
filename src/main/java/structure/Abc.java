@@ -24,7 +24,24 @@ public class Abc {
     @JacksonXmlProperty(isAttribute = true)
     String description;
 
+    public String getName() {
+        return name;
+    }
+
+    public String getShort_name() {
+        return short_name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
     @JacksonXmlProperty
+
     @JacksonXmlText
     String contents;
 
@@ -37,6 +54,9 @@ public class Abc {
         this.name = name;
         this.short_name = short_name;
         this.contents = contents;
+    }
+
+    public Abc() {
     }
 
     public Abc(String name, String short_name, String description, String contents) {

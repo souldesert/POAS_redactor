@@ -3,6 +3,7 @@ package structure;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 
 /**
  * Created by Alex on 27.11.2016.
@@ -13,6 +14,14 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 public class Predicate {
 
     public Predicate() {
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @JacksonXmlProperty(isAttribute = true)
@@ -36,14 +45,33 @@ public class Predicate {
         return memoryRight;
     }
 
-    @JacksonXmlProperty/*(localName = "memory")*/
+    @JacksonXmlProperty(localName = "left")
     Memory memoryLeft;
 
     @JacksonXmlProperty
     String sign;
 
-    @JacksonXmlProperty/*(localName = "memory")*/
+    @JacksonXmlProperty(localName = "right")
     Memory memoryRight;
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    @JacksonXmlProperty
+    @JacksonXmlText
+
+    String contents;
+
+
+    public Predicate(String type, String contents) {
+        this.type = type;
+        this.contents = contents;
+    }
 
     public Predicate(String type, String nameOrValue, boolean setValue) {
         this.type = type;

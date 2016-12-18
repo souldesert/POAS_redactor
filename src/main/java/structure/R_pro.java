@@ -22,6 +22,10 @@ public class R_pro {
     @JacksonXmlProperty
     String comment = "";
 
+    public Descriptive_part getDescriptive_part() {
+        return descriptive_part;
+    }
+
     @JacksonXmlProperty
     Descriptive_part descriptive_part;
 
