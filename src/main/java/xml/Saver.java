@@ -7,7 +7,9 @@ import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import structure.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -18,6 +20,7 @@ public class Saver {
     public boolean save(R_pro r_pro) {
         Stage saveStage = new Stage();
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.setTitle("Сохранить программу");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Программа Р-тран", "*.rtran"));
         File destination = fileChooser.showSaveDialog(saveStage);

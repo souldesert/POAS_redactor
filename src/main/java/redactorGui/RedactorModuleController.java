@@ -61,6 +61,8 @@ public class RedactorModuleController {
         alert.showAndWait();
     }
 
+    // TODO: 26.12.2016 Сделать сохранение уже открытого файла по запомненному пути 
+
     @FXML
     private void handleSave() {
         Saver saver = new Saver();
@@ -102,8 +104,25 @@ public class RedactorModuleController {
         if (readed.getDescriptive_part().getMemory_block() != null) {
             for (Memory memory : readed.getDescriptive_part().getMemory_block().getMemory()) {
                 memoryTypeRecord record = new memoryTypeRecord();
-                record.setName(memory.getName());
-                record.setType(memory.getType());
+
+                switch (memory.getType()) {
+                    case "Counter":
+                        record.setType("Счетчик");
+                        record.setName(memory.getName());
+                        break;
+                    case "Register":
+                        record.setType("Регистр");
+                        record.setName(memory.getName());
+                        break;
+                    case "Wagon":
+                        record.setType("Вагон");
+                        record.setName(memory.getLeftName() + " | " + memory.getRightName());
+                        break;
+                    case "Table":
+                        record.setType("Таблица");
+                        record.setName(memory.getName());
+                        break;
+                }
                 readedMemory.add(record);
             }
         }
@@ -114,67 +133,69 @@ public class RedactorModuleController {
     private void insertAlg(R_pro readed) {
         ObservableList<Command> readedCommands = FXCollections.observableArrayList();
         Command currentCommand = new Command();
-        for (Arm arm : readed.getAlg().getArm()) {
-            currentCommand.setMetka(arm.getBegin());
-            currentCommand.setFlag(Flags.TAG);
-            for (Edge edge : arm.getEdge()) {
+        if (readed.getAlg() != null) {
+            for (Arm arm : readed.getAlg().getArm()) {
+                currentCommand.setMetka(arm.getBegin());
+                currentCommand.setFlag(Flags.TAG);
+                for (Edge edge : arm.getEdge()) {
 
-                ObservableList<String> memoryOptions = FXCollections.observableArrayList();
-                ObservableList<String> alphabetOptions = FXCollections.observableArrayList();
+                    ObservableList<String> memoryOptions = FXCollections.observableArrayList();
+                    ObservableList<String> alphabetOptions = FXCollections.observableArrayList();
 
-                for (memoryTypeRecord record : redactorModule.getMemoryTypesData()) {
-                    memoryOptions.add(record.getName());
-                }
-                for (alphabetRecord record : redactorModule.getAlphabetsData()) {
-                    alphabetOptions.add(record.getName());
-                }
+                    for (memoryTypeRecord record : redactorModule.getMemoryTypesData()) {
+                        memoryOptions.add(record.getName());
+                    }
+                    for (alphabetRecord record : redactorModule.getAlphabetsData()) {
+                        alphabetOptions.add(record.getName());
+                    }
 
-                String value;
-                String type = edge.getPredicate().getType();
+                    String value;
+                    String type = edge.getPredicate().getType();
 
-                if (type.equals("memory")) {
-                    currentCommand.setPredicateType(PredicateTypes.MEMORY);
-                    value = edge.getPredicate().getContents();
-                    currentCommand.setUslovie(value);
-                } else if (type.equals("alphabet")) {
-                    currentCommand.setPredicateType(PredicateTypes.ALPHABET);
-                    value = edge.getPredicate().getContents();
-                    currentCommand.setUslovie(value);
-                } else if (type.equals("expression")) {
-                    currentCommand.setPredicateType(PredicateTypes.EXPRESSION);
-                    String memoryLeft = edge.getPredicate().getMemoryLeft().getName();
-                    String memoryRight = edge.getPredicate().getMemoryRight().getName();
-                    String sign = edge.getPredicate().getSign();
-                    currentCommand.setUslovie(memoryLeft + " " + sign + " " + memoryRight);
-                } else {
-                    currentCommand.setPredicateType(PredicateTypes.STRING);
-                    value = edge.getPredicate().getContents();
-                    currentCommand.setUslovie(value);
-                }
+                    if (type.equals("memory")) {
+                        currentCommand.setPredicateType(PredicateTypes.MEMORY);
+                        value = edge.getPredicate().getContents();
+                        currentCommand.setUslovie(value);
+                    } else if (type.equals("alphabet")) {
+                        currentCommand.setPredicateType(PredicateTypes.ALPHABET);
+                        value = edge.getPredicate().getContents();
+                        currentCommand.setUslovie(value);
+                    } else if (type.equals("expression")) {
+                        currentCommand.setPredicateType(PredicateTypes.EXPRESSION);
+                        String memoryLeft = edge.getPredicate().getMemoryLeft().getName();
+                        String memoryRight = edge.getPredicate().getMemoryRight().getName();
+                        String sign = edge.getPredicate().getSign();
+                        currentCommand.setUslovie(memoryLeft + " " + sign + " " + memoryRight);
+                    } else {
+                        currentCommand.setPredicateType(PredicateTypes.STRING);
+                        value = edge.getPredicate().getContents();
+                        currentCommand.setUslovie(value);
+                    }
 
 //                String memoryLeft = edge.getPredicate().getMemoryLeft().getName();
 //                String memoryRight = edge.getPredicate().getMemoryRight().getName();
 //                String sign = edge.getPredicate().getSign();
 //                currentCommand.setUslovie(memoryLeft + " " + sign + " " + memoryRight);
-                if (currentCommand.getFlag() != Flags.TAG) {
-                    currentCommand.setFlag(Flags.CONDITION);
+                    if (currentCommand.getFlag() != Flags.TAG) {
+                        currentCommand.setFlag(Flags.CONDITION);
+                    }
+                    for (Operation operation : edge.getOperation()) {
+                        String left = operation.getLeft().getValue();
+                        String right = operation.getRight().getValue();
+                        String operator = operation.getOperator();
+                        currentCommand.setLinop(left + " " + operator + " " + right);
+                        if (currentCommand.getFlag() != Flags.TAG && currentCommand.getFlag() != Flags.CONDITION)
+                            currentCommand.setFlag(Flags.OPERATOR);
+                        readedCommands.add(currentCommand);
+                        currentCommand = new Command();
+                    }
+                    Command lastOperator = readedCommands.get(readedCommands.size() - 1);
+                    lastOperator.setMetkaPerehoda(edge.getEnd());
+                    readedCommands.remove(readedCommands.size() - 1);
+                    readedCommands.add(lastOperator);
                 }
-                for (Operation operation : edge.getOperation()) {
-                    String left = operation.getLeft().getValue();
-                    String right = operation.getRight().getValue();
-                    String operator = operation.getOperator();
-                    currentCommand.setLinop(left + " " + operator + " " + right);
-                    if (currentCommand.getFlag() != Flags.TAG && currentCommand.getFlag() != Flags.CONDITION)
-                        currentCommand.setFlag(Flags.OPERATOR);
-                    readedCommands.add(currentCommand);
-                    currentCommand = new Command();
-                }
-                Command lastOperator = readedCommands.get(readedCommands.size() - 1);
-                lastOperator.setMetkaPerehoda(edge.getEnd());
-                readedCommands.remove(readedCommands.size() - 1);
-                readedCommands.add(lastOperator);
-            }
 
+            }
         }
         redactorModule.getCommandData().removeAll();
         redactorModule.getCommandData().addAll(readedCommands);

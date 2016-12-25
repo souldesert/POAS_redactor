@@ -25,6 +25,7 @@ public class Loader {
     public boolean load() {
         Stage loadStage = new Stage();
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.setTitle("Открыть программу");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Программа Р-тран", "*.rtran"));
         File destination = fileChooser.showOpenDialog(loadStage);

@@ -1,5 +1,8 @@
 package redactorGui.memoryTypes.addNewMemoryType;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.layout.GridPane;
 import redactorGui.memoryTypes.memoryTypeRecord;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -21,7 +24,16 @@ public class addNewMemoryTypeController {
     private TextField nameField;
 
     @FXML
+    private TextField lv;
+
+    @FXML
+    private TextField pv;
+
+    @FXML
     private TextArea commentsArea;
+
+    @FXML
+    private GridPane wagonPane;
 
     private Stage dialogStage;
     private memoryTypeRecord memoryRecord;
@@ -29,7 +41,16 @@ public class addNewMemoryTypeController {
 
     @FXML
     private void initialize() {
-        typeChoiceBox.setItems(FXCollections.observableArrayList("счетчик", "регистр", "вагон", "таблица"));
+        typeChoiceBox.setItems(FXCollections.observableArrayList("Счетчик", "Регистр", "Вагон", "Таблица"));
+        typeChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            if (typeChoiceBox.getItems().get(newValue.intValue()).equals("Вагон")) {
+                nameField.setVisible(false);
+                wagonPane.setVisible(true);
+            } else {
+                wagonPane.setVisible(false);
+                nameField.setVisible(true);
+            }
+        });
     }
 
     public void setDialogStage(Stage dialogStage) {
@@ -39,7 +60,12 @@ public class addNewMemoryTypeController {
     public void setRecord(memoryTypeRecord memoryRecord) {
         this.memoryRecord = memoryRecord;
         typeChoiceBox.setValue(memoryRecord.getType());
-        nameField.setText(memoryRecord.getName());
+        if (typeChoiceBox.getValue().toString().equals("Вагон")) {
+            lv.setText(memoryRecord.getName().split(" | ")[0]);
+            pv.setText(memoryRecord.getName().split(" | ")[2]);
+        } else {
+            nameField.setText(memoryRecord.getName());
+        }
         commentsArea.setText(memoryRecord.getComments());
     }
 
@@ -47,12 +73,19 @@ public class addNewMemoryTypeController {
         return okClicked;
     }
 
+
     @FXML
     private void handleOk() {
         if(isInputValid()) {
             memoryRecord.setType(typeChoiceBox.getValue().toString());
-            memoryRecord.setName(nameField.getText());
             memoryRecord.setComments(commentsArea.getText());
+            if (memoryRecord.getType().equals("Вагон")) {
+                String wagonName = lv.getText() + " | " + pv.getText();
+                memoryRecord.setName(wagonName);
+            } else {
+                memoryRecord.setName(nameField.getText());
+            }
+
             okClicked = true;
             dialogStage.close();
         }
@@ -71,8 +104,22 @@ public class addNewMemoryTypeController {
             errorMessage += "Выберите тип памяти!\n";
         }
 
-        if (nameField.getText() == null || nameField.getText().length() == 0) {
-            errorMessage += "Должна быть объявлена хотя бы одна память!\n";
+        if (typeChoiceBox.getValue().toString().equals("Вагон")) {
+
+            if (lv.getText() == null || lv.getText().length() == 0) {
+                errorMessage += "Не присвоено имя левой ячейке вагонной памяти!\n";
+            }
+
+            if (pv.getText() == null || pv.getText().length() == 0) {
+                errorMessage += "Не присвоено имя правой ячейке вагонной памяти!\n";
+            }
+
+        } else {
+
+            if (nameField.getText() == null || nameField.getText().length() == 0) {
+                errorMessage += "Должна быть объявлена хотя бы одна память!\n";
+            }
+
         }
 
         if(errorMessage.length() == 0) {

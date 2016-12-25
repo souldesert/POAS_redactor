@@ -27,6 +27,22 @@ public class Memory {
 
     String name;
 
+    public String getLeftName() {
+        return leftName;
+    }
+
+    public void setLeftName(String leftName) {
+        this.leftName = leftName;
+    }
+
+    public String getRightName() {
+        return rightName;
+    }
+
+    public void setRightName(String rightName) {
+        this.rightName = rightName;
+    }
+
     @JacksonXmlProperty(isAttribute = true)
     String leftName;
 

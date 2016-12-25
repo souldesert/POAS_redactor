@@ -21,9 +21,11 @@ import redactorGui.redactor.PredicateTypes;
  */
 public class addNewLineController {
 
-    ObservableList<String> options = FXCollections.observableArrayList();
-    ObservableList<String> memoryOptions = FXCollections.observableArrayList();
-    ObservableList<String> alphabetOptions = FXCollections.observableArrayList();
+    private ObservableList<String> predicateOptions = FXCollections.observableArrayList();
+    private ObservableList<String> memoryOptions = FXCollections.observableArrayList();
+    private ObservableList<String> alphabetOptions = FXCollections.observableArrayList();
+
+    private ObservableList<String> metkaPerehodaOptions = FXCollections.observableArrayList();
 
     @FXML
     private TextField metkaField;
@@ -35,7 +37,7 @@ public class addNewLineController {
     private TextField linopField;
 
     @FXML
-    private TextField metkaPerehodaField;
+    private ComboBox metkaPerehodaField;
 
     @FXML
     private TextArea commentsArea;
@@ -46,16 +48,35 @@ public class addNewLineController {
     private RedactorModule redactorModule;
 
     public void loadOptions() {
+
+        // Загрузить опции для поля "Условие"
+
         for (memoryTypeRecord record : redactorModule.getMemoryTypesData()) {
-            memoryOptions.add(record.getName());
+            if (record.getType().equals("Вагон")) {
+                memoryOptions.add(record.getName().split(" | ")[0]);
+                memoryOptions.add(record.getName().split(" | ")[2]);
+            } else {
+                memoryOptions.add(record.getName());
+            }
         }
         for (alphabetRecord record : redactorModule.getAlphabetsData()) {
             alphabetOptions.add(record.getName());
         }
-        options.addAll(memoryOptions);
-        options.addAll(alphabetOptions);
-        uslovieField.setItems(options);
+
+        predicateOptions.addAll(memoryOptions);
+        predicateOptions.addAll(alphabetOptions);
+        uslovieField.setItems(predicateOptions);
         TextFields.bindAutoCompletion(uslovieField.getEditor(), uslovieField.getItems());
+
+        // Загрузить опции для поля "Метка перехода"
+
+        for (Command record : redactorModule.getCommandData()) {
+            metkaPerehodaOptions.add(record.getMetka());
+        }
+
+        metkaPerehodaField.setItems(metkaPerehodaOptions);
+        TextFields.bindAutoCompletion(metkaPerehodaField.getEditor(), metkaPerehodaField.getItems());
+
     }
 
     @FXML
@@ -76,7 +97,7 @@ public class addNewLineController {
         metkaField.setText(command.getMetka());
         uslovieField.setValue(command.getUslovie());
         linopField.setText(command.getLinop());
-        metkaPerehodaField.setText(command.getMetkaPerehoda());
+        metkaPerehodaField.setValue(command.getMetkaPerehoda());
         commentsArea.setText(command.getComments());
     }
 
@@ -90,7 +111,7 @@ public class addNewLineController {
             command.setMetka(metkaField.getText());
             command.setUslovie(uslovieField.getValue().toString());
             command.setLinop(linopField.getText());
-            command.setMetkaPerehoda(metkaPerehodaField.getText());
+            command.setMetkaPerehoda(metkaPerehodaField.getValue().toString());
             command.setComments(commentsArea.getText());
             okClicked = true;
             dialogStage.close();
@@ -126,11 +147,11 @@ public class addNewLineController {
         }
 
         if(errorMessage.length() == 0) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Информация о команде");
-            alert.setHeaderText("Флаг: ");
-            alert.setContentText(command.getFlag().toString());
-            alert.showAndWait();
+//            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//            alert.setTitle("Информация о команде");
+//            alert.setHeaderText("Флаг: ");
+//            alert.setContentText(command.getFlag().toString());
+//            alert.showAndWait();
             return true;
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
