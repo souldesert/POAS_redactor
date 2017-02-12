@@ -70,6 +70,7 @@ public class alphabetsController {
             addNewAlphabetController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setRecord(alphabet);
+            controller.setRedactorModule(redactorModule);
 
             dialogStage.showAndWait();
 

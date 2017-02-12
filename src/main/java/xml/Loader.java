@@ -19,6 +19,16 @@ public class Loader {
 
     R_pro readed;
 
+    private File location;
+
+    public File getLocation() {
+        return location;
+    }
+
+    public void setLocation(File location) {
+        this.location = location;
+    }
+
     public Loader() {
     }
 
@@ -29,6 +39,7 @@ public class Loader {
         fileChooser.setTitle("Открыть программу");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Программа Р-тран", "*.rtran"));
         File destination = fileChooser.showOpenDialog(loadStage);
+        location = destination;
         if (destination != null) {
             JacksonXmlModule module = new JacksonXmlModule();
             module.setDefaultUseWrapper(false);

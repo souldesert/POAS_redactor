@@ -34,6 +34,7 @@ public class RedactorModule extends Application {
     private Stage primaryStage;
     private BorderPane RootWindow;
 
+
     public void setCommandData(ObservableList<Command> commandData) {
         this.commandData = commandData;
     }
@@ -235,9 +236,36 @@ public class RedactorModule extends Application {
         Right right = new Right();
         Operation operation;
         List<String> knownOperators = new ArrayList<>();
+
         knownOperators.add("=");
+
         knownOperators.add("->");
+        knownOperators.add("/->/");
+        knownOperators.add("/->");
+        knownOperators.add("->/");
+
         knownOperators.add("<-");
+        knownOperators.add("/<-/");
+        knownOperators.add("/<-");
+        knownOperators.add("<-/");
+
+
+        knownOperators.add("|-");
+        knownOperators.add("-|");
+
+        knownOperators.add("&=");
+
+        knownOperators.add("~=");
+
+        knownOperators.add("^=");
+
+        knownOperators.add(":=");
+
+        knownOperators.add(">");
+        knownOperators.add("<");
+        knownOperators.add("==");
+        knownOperators.add("!=");
+
         for(String oper : knownOperators) {
             if (linop.contains(oper)) {
                 String stripped = StringUtils.remove(linop, " ");
@@ -245,6 +273,7 @@ public class RedactorModule extends Application {
                 left = new Left(tokens[0]);
                 operator = oper;
                 right = new Right(tokens[1]);
+                break;
             }
         }
         operation = new Operation(left, operator, right);

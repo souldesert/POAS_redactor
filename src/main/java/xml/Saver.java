@@ -17,7 +17,17 @@ import java.io.IOException;
  */
 public class Saver {
 
-    public boolean save(R_pro r_pro) {
+    public File getKnownDestination() {
+        return knownDestination;
+    }
+
+    public void setKnownDestination(File destination) {
+        this.knownDestination = destination;
+    }
+
+    private File knownDestination;
+
+    public boolean saveAs(R_pro r_pro) {
         Stage saveStage = new Stage();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
@@ -41,4 +51,19 @@ public class Saver {
             return false;
         }
     }
+    
+    public void save(R_pro r_pro) {
+        String progname = StringUtils.removeEnd(knownDestination.getName(), ".rtran");
+        r_pro.setProgname(progname);
+        JacksonXmlModule module = new JacksonXmlModule();
+        module.setDefaultUseWrapper(false);
+        XmlMapper xmlMapper = new XmlMapper(module);
+        try {
+            xmlMapper.writeValue(knownDestination, r_pro);
+            System.out.println("Сохранено успешно!");
+        } catch (IOException e) {
+            System.out.println("I/O Error: " + e);
+        }
+    }
+    
 }

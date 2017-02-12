@@ -24,6 +24,8 @@ public class addNewLineController {
     private ObservableList<String> predicateOptions = FXCollections.observableArrayList();
     private ObservableList<String> memoryOptions = FXCollections.observableArrayList();
     private ObservableList<String> alphabetOptions = FXCollections.observableArrayList();
+    private ObservableList<String> operatorOptions = FXCollections.observableArrayList();
+    private ObservableList<String> funcOptions = FXCollections.observableArrayList();
 
     private ObservableList<String> metkaPerehodaOptions = FXCollections.observableArrayList();
 
@@ -34,7 +36,14 @@ public class addNewLineController {
     private ComboBox uslovieField;
 
     @FXML
-    private TextField linopField;
+    private ComboBox linopFieldLeft;
+
+    @FXML
+    private ComboBox linopFieldCenter;
+
+    @FXML
+    private ComboBox linopFieldRight;
+
 
     @FXML
     private ComboBox metkaPerehodaField;
@@ -77,6 +86,32 @@ public class addNewLineController {
         metkaPerehodaField.setItems(metkaPerehodaOptions);
         TextFields.bindAutoCompletion(metkaPerehodaField.getEditor(), metkaPerehodaField.getItems());
 
+        // Загрузить опции линейных операторов
+
+
+        linopFieldLeft.setItems(memoryOptions);
+        TextFields.bindAutoCompletion(linopFieldLeft.getEditor(), linopFieldLeft.getItems());
+
+        operatorOptions.add("|-");
+        operatorOptions.add("-|");
+        operatorOptions.add("&=");
+        operatorOptions.add("~=");
+        operatorOptions.add("^");
+        operatorOptions.add("^=");
+        operatorOptions.add(":");
+        operatorOptions.add(":=");
+        operatorOptions.add("->");
+        operatorOptions.add("<-");
+        operatorOptions.add("/");
+        operatorOptions.add("*");
+
+        linopFieldCenter.setItems(operatorOptions);
+        TextFields.bindAutoCompletion(linopFieldCenter.getEditor(), linopFieldCenter.getItems());
+
+        funcOptions.add("sqrt()");
+
+        linopFieldRight.setItems(funcOptions);
+        TextFields.bindAutoCompletion(linopFieldRight.getEditor(), linopFieldRight.getItems());
     }
 
     @FXML
@@ -96,7 +131,15 @@ public class addNewLineController {
         this.command = command;
         metkaField.setText(command.getMetka());
         uslovieField.setValue(command.getUslovie());
-        linopField.setText(command.getLinop());
+        // todo заменить
+        if (command.getLinop().equals("*")) {
+            linopFieldCenter.setValue("*");
+        } else if (command.getLinop().length() != 0) {
+            linopFieldLeft.setValue(command.getLinop().split(" ")[0]);
+            linopFieldCenter.setValue(command.getLinop().split(" ")[1]);
+            linopFieldRight.setValue(command.getLinop().split(" ")[2]);
+        }
+
         metkaPerehodaField.setValue(command.getMetkaPerehoda());
         commentsArea.setText(command.getComments());
     }
@@ -110,7 +153,14 @@ public class addNewLineController {
         if(isInputValid()) {
             command.setMetka(metkaField.getText());
             command.setUslovie(uslovieField.getValue().toString());
-            command.setLinop(linopField.getText());
+            // todo заменить
+            // System.out.println(linopField.getText());
+            if (linopFieldCenter.getValue().toString().equals("*")) {
+                command.setLinop(linopFieldCenter.getValue().toString());
+            } else {
+                command.setLinop(linopFieldLeft.getValue().toString() + " " + linopFieldCenter.getValue().toString()
+                        + " " + linopFieldRight.getValue().toString());
+            }
             command.setMetkaPerehoda(metkaPerehodaField.getValue().toString());
             command.setComments(commentsArea.getText());
             okClicked = true;
@@ -129,9 +179,13 @@ public class addNewLineController {
 
         boolean metkaNotEmpty = !(metkaField.getText() == null || metkaField.getText().length() == 0);
         boolean uslovieNotEmpty = !(uslovieField.getValue().toString() == null || uslovieField.getValue().toString().length() == 0);
-        boolean linopNotEmpty = !(linopField.getText() == null || linopField.getText().length() == 0);
+        // todo заменить
+        boolean linopLeftNotEmpty = !(linopFieldLeft.getValue() == null || linopFieldLeft.getValue().toString().length() == 0);
+        boolean linopCenterNotEmpty = !(linopFieldCenter.getValue() == null || linopFieldCenter.getValue().toString().length() == 0);
+        boolean linopRightNotEmpty = !(linopFieldRight.getValue() == null || linopFieldRight.getValue().toString().length() == 0);
+        boolean linopIsOkay = (linopLeftNotEmpty && linopCenterNotEmpty && linopRightNotEmpty) || linopFieldCenter.getValue().toString().equals("*");
 
-        if (linopNotEmpty) {
+        if (linopIsOkay) {
             command.setFlag(Flags.OPERATOR);
             if (uslovieNotEmpty) {
                 command.setFlag(Flags.CONDITION);

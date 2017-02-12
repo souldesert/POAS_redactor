@@ -62,6 +62,7 @@ public class memoryTypesController {
             addNewMemoryTypeController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setRecord(memoryRecord);
+            controller.setRedactorModule(redactorModule);
 
             dialogStage.showAndWait();
 

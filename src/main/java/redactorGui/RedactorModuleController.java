@@ -18,6 +18,7 @@ import structure.*;
 import xml.Loader;
 import xml.Saver;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -35,13 +36,26 @@ public class RedactorModuleController {
     @FXML
     private Tab alphabetsTab;
 
+    public File getPath() {
+        return path;
+    }
+
+    public void setPath(File path) {
+        this.path = path;
+    }
+
+    private File path;
+
 
     public void setRedactorModule(RedactorModule redactorModule) {
         this.redactorModule = redactorModule;
         this.redactorModule.setRedactorTab(redactorTab);
         this.redactorModule.setMemoryTypesTab(memoryTypesTab);
         this.redactorModule.setAlphabetsTab(alphabetsTab);
+        path = null;
     }
+
+    // TODO: 06.02.2017 cделать стирание старой таблицы при открытии нового rtran файла 
 
     @FXML
     private void initialize() {
@@ -65,18 +79,35 @@ public class RedactorModuleController {
 
     @FXML
     private void handleSave() {
-        Saver saver = new Saver();
-        if(saver.save(redactorModule.getR_pro())) {
+
+        if (path == null) {
+            handleSaveAs();
+        } else {
+            Saver saver = new Saver();
+            saver.setKnownDestination(path);
+            saver.save(redactorModule.getR_pro());
             redactorModule.getPrimaryStage().setTitle(redactorModule.getR_pro().getProgname());
         }
     }
 
     @FXML
+    private void handleSaveAs() {
+        Saver saver = new Saver();
+        if(saver.saveAs(redactorModule.getR_pro())) {
+            redactorModule.getPrimaryStage().setTitle(redactorModule.getR_pro().getProgname());
+        }
+    }
+
+    // TODO: 26.12.2016 сделать очищение перед загрузкой новой программы 
+
+    @FXML
     private void handleLoad() {
         Loader loader = new Loader();
         if (loader.load()) {
+
             R_pro readed = loader.getReaded();
             redactorModule.updateR_pro(readed);
+            path = loader.getLocation();
             insertAlg(readed);
             insertMemory(readed);
             insertAbc(readed);

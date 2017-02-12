@@ -1,5 +1,6 @@
 package redactorGui.alphabets.addNewAlphabet;
 
+import redactorGui.RedactorModule;
 import redactorGui.alphabets.alphabetRecord;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -27,9 +28,14 @@ public class addNewAlphabetController {
     private Stage dialogStage;
     private alphabetRecord alphabet;
     private boolean okClicked = false;
+    private RedactorModule redactorModule;
 
     @FXML
     private void initialize() {
+    }
+
+    public void setRedactorModule(RedactorModule redactorModule) {
+        this.redactorModule = redactorModule;
     }
 
     public void setDialogStage(Stage dialogStage) {
@@ -68,6 +74,12 @@ public class addNewAlphabetController {
     @FXML
     private boolean isInputValid() {
         String errorMessage = "";
+
+        for (alphabetRecord record : redactorModule.getAlphabetsData()) {
+            if(nameField.getText().equals(record.getName()) || shortNameField.getText().equals(record.getShortName())) {
+                errorMessage += "Синтерм с таким именем уже существует!\n";
+            }
+        }
 
         if (nameField.getText() == null || nameField.getText().length() == 0) {
             errorMessage += "Укажите название синтерма!\n";

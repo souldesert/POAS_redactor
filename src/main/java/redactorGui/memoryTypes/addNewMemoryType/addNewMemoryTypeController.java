@@ -3,6 +3,7 @@ package redactorGui.memoryTypes.addNewMemoryType;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.GridPane;
+import redactorGui.RedactorModule;
 import redactorGui.memoryTypes.memoryTypeRecord;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -38,6 +39,7 @@ public class addNewMemoryTypeController {
     private Stage dialogStage;
     private memoryTypeRecord memoryRecord;
     private boolean okClicked = false;
+    private RedactorModule redactorModule;
 
     @FXML
     private void initialize() {
@@ -51,6 +53,10 @@ public class addNewMemoryTypeController {
                 nameField.setVisible(true);
             }
         });
+    }
+
+    public void setRedactorModule(RedactorModule redactorModule) {
+        this.redactorModule = redactorModule;
     }
 
     public void setDialogStage(Stage dialogStage) {
@@ -99,6 +105,12 @@ public class addNewMemoryTypeController {
     @FXML
     private boolean isInputValid() {
         String errorMessage = "";
+
+        for (memoryTypeRecord record : redactorModule.getMemoryTypesData()) {
+            if(nameField.getText().equals(record.getName())) {
+                errorMessage += "Память с таким именем уже существует!\n";
+            }
+        }
 
         if (typeChoiceBox.getValue() == null || typeChoiceBox.getValue().toString().length() == 0) {
             errorMessage += "Выберите тип памяти!\n";
