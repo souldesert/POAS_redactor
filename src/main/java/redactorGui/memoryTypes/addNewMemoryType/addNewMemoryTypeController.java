@@ -1,17 +1,19 @@
 package redactorGui.memoryTypes.addNewMemoryType;
 
+import com.google.common.io.Resources;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import redactorGui.RedactorModule;
 import redactorGui.memoryTypes.memoryTypeRecord;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 /**
  * Created by Alex on 21.11.2016.
@@ -36,6 +38,12 @@ public class addNewMemoryTypeController {
     @FXML
     private GridPane wagonPane;
 
+    @FXML
+    private Button doneButton;
+
+    @FXML
+    private Button cancelButton;
+
     private Stage dialogStage;
     private memoryTypeRecord memoryRecord;
     private boolean okClicked = false;
@@ -43,6 +51,16 @@ public class addNewMemoryTypeController {
 
     @FXML
     private void initialize() {
+        try {
+            Image doneImage = new Image(Resources.getResource("ic_done_black_24dp_1x.png").openStream());
+            doneButton.setGraphic(new ImageView(doneImage));
+
+            Image cancelImage = new Image(Resources.getResource("ic_cancel_black_24dp_1x.png").openStream());
+            cancelButton.setGraphic(new ImageView(cancelImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         typeChoiceBox.setItems(FXCollections.observableArrayList("Счетчик", "Регистр", "Вагон", "Таблица"));
         typeChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             if (typeChoiceBox.getItems().get(newValue.intValue()).equals("Вагон")) {

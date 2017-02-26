@@ -1,5 +1,9 @@
 package redactorGui.alphabets;
 
+import com.google.common.io.Resources;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import redactorGui.RedactorModule;
 import redactorGui.alphabets.addNewAlphabet.addNewAlphabetController;
 import javafx.fxml.FXML;
@@ -38,10 +42,32 @@ public class alphabetsController {
     @FXML
     private TableColumn<alphabetRecord, String> commentsColumn;
 
+    @FXML
+    private Button addButton;
+
+    @FXML
+    private Button editButton;
+
+    @FXML
+    private Button deleteButton;
+
     private RedactorModule redactorModule;
 
     @FXML
     private void initialize() {
+        try {
+            Image imageAdd = new Image(Resources.getResource("ic_add_box_black_24dp_1x.png").openStream());
+            addButton.setGraphic(new ImageView(imageAdd));
+
+            Image imageEdit = new Image(Resources.getResource("ic_edit_black_24dp_1x.png").openStream());
+            editButton.setGraphic(new ImageView(imageEdit));
+
+            Image imageDelete = new Image(Resources.getResource("ic_delete_black_24dp_1x.png").openStream());
+            deleteButton.setGraphic(new ImageView(imageDelete));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         syntermColumn.setCellValueFactory(cellData -> cellData.getValue().syntermProperty());
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         shortNameColumn.setCellValueFactory(cellData -> cellData.getValue().shortNameProperty());

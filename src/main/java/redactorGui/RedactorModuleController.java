@@ -55,8 +55,6 @@ public class RedactorModuleController {
         path = null;
     }
 
-    // TODO: 06.02.2017 cделать стирание старой таблицы при открытии нового rtran файла 
-
     @FXML
     private void initialize() {
         RedactorController command_redactor = new RedactorController();

@@ -1,5 +1,9 @@
 package redactorGui.alphabets.addNewAlphabet;
 
+import com.google.common.io.Resources;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import redactorGui.RedactorModule;
 import redactorGui.alphabets.alphabetRecord;
 import javafx.fxml.FXML;
@@ -7,6 +11,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 /**
  * Created by Alex on 21.11.2016.
@@ -25,6 +31,12 @@ public class addNewAlphabetController {
     @FXML
     private TextArea commentsArea;
 
+    @FXML
+    private Button doneButton;
+
+    @FXML
+    private Button cancelButton;
+
     private Stage dialogStage;
     private alphabetRecord alphabet;
     private boolean okClicked = false;
@@ -32,6 +44,15 @@ public class addNewAlphabetController {
 
     @FXML
     private void initialize() {
+        try {
+            Image doneImage = new Image(Resources.getResource("ic_done_black_24dp_1x.png").openStream());
+            doneButton.setGraphic(new ImageView(doneImage));
+
+            Image cancelImage = new Image(Resources.getResource("ic_cancel_black_24dp_1x.png").openStream());
+            cancelButton.setGraphic(new ImageView(cancelImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setRedactorModule(RedactorModule redactorModule) {

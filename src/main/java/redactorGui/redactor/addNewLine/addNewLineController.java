@@ -1,20 +1,22 @@
 package redactorGui.redactor.addNewLine;
 
+import com.google.common.io.Resources;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import redactorGui.RedactorModule;
 import redactorGui.alphabets.alphabetRecord;
 import redactorGui.memoryTypes.memoryTypeRecord;
 import redactorGui.redactor.Command;
 import redactorGui.redactor.Flags;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.TextFields;
 import redactorGui.redactor.PredicateTypes;
+
+import java.io.IOException;
 
 /**
  * Created by Alex on 24.10.2016.
@@ -26,14 +28,25 @@ public class addNewLineController {
     private ObservableList<String> alphabetOptions = FXCollections.observableArrayList();
     private ObservableList<String> operatorOptions = FXCollections.observableArrayList();
     private ObservableList<String> funcOptions = FXCollections.observableArrayList();
+    //private ObservableList<String> predOperOptions = FXCollections.observableArrayList();
+
 
     private ObservableList<String> metkaPerehodaOptions = FXCollections.observableArrayList();
 
     @FXML
     private TextField metkaField;
 
+    // TODO: 13.02.2017 разбить на 3 ComboBox'a 
     @FXML
-    private ComboBox uslovieField;
+    private ComboBox uslovieFieldLeft;
+
+    @FXML
+    private ComboBox uslovieFieldCenter;
+
+    @FXML
+    private ComboBox uslovieFieldRight;
+
+    //private ComboBox uslovieField;
 
     @FXML
     private ComboBox linopFieldLeft;
@@ -50,6 +63,12 @@ public class addNewLineController {
 
     @FXML
     private TextArea commentsArea;
+
+    @FXML
+    private Button doneButton;
+
+    @FXML
+    private Button cancelButton;
 
     private Stage dialogStage;
     private Command command;
@@ -72,10 +91,27 @@ public class addNewLineController {
             alphabetOptions.add(record.getName());
         }
 
-        predicateOptions.addAll(memoryOptions);
+        //predicateOptions.addAll(memoryOptions);
+        //predicateOptions.addAll(alphabetOptions);
+
+        uslovieFieldLeft.setItems(memoryOptions);
+        TextFields.bindAutoCompletion(uslovieFieldLeft.getEditor(), uslovieFieldLeft.getItems());
+
         predicateOptions.addAll(alphabetOptions);
-        uslovieField.setItems(predicateOptions);
-        TextFields.bindAutoCompletion(uslovieField.getEditor(), uslovieField.getItems());
+
+        predicateOptions.add("<");
+        predicateOptions.add(">");
+        predicateOptions.add("<=");
+        predicateOptions.add(">=");
+        predicateOptions.add("==");
+        predicateOptions.add("!=");
+        predicateOptions.add("*");
+
+        uslovieFieldCenter.setItems(predicateOptions);
+        TextFields.bindAutoCompletion(uslovieFieldCenter.getEditor(), uslovieFieldCenter.getItems());
+
+        uslovieFieldRight.setItems(memoryOptions);
+        TextFields.bindAutoCompletion(uslovieFieldRight.getEditor(), uslovieFieldRight.getItems());
 
         // Загрузить опции для поля "Метка перехода"
 
@@ -92,8 +128,8 @@ public class addNewLineController {
         linopFieldLeft.setItems(memoryOptions);
         TextFields.bindAutoCompletion(linopFieldLeft.getEditor(), linopFieldLeft.getItems());
 
-        operatorOptions.add("|-");
-        operatorOptions.add("-|");
+        //operatorOptions.add("|-");
+        //operatorOptions.add("-|");
         operatorOptions.add("&=");
         operatorOptions.add("~=");
         operatorOptions.add("^");
@@ -107,8 +143,12 @@ public class addNewLineController {
 
         linopFieldCenter.setItems(operatorOptions);
         TextFields.bindAutoCompletion(linopFieldCenter.getEditor(), linopFieldCenter.getItems());
-
         funcOptions.add("sqrt()");
+
+        // TODO: 13.02.2017 добавить и в левую часть 
+        funcOptions.add("FILE");
+        funcOptions.add("CONSOLE");
+        funcOptions.add("MEMORY");
 
         linopFieldRight.setItems(funcOptions);
         TextFields.bindAutoCompletion(linopFieldRight.getEditor(), linopFieldRight.getItems());
@@ -116,6 +156,15 @@ public class addNewLineController {
 
     @FXML
     private void initialize() {
+        try {
+            Image doneImage = new Image(Resources.getResource("ic_done_black_24dp_1x.png").openStream());
+            doneButton.setGraphic(new ImageView(doneImage));
+
+            Image cancelImage = new Image(Resources.getResource("ic_cancel_black_24dp_1x.png").openStream());
+            cancelButton.setGraphic(new ImageView(cancelImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -130,8 +179,16 @@ public class addNewLineController {
     public void setCommand(Command command) {
         this.command = command;
         metkaField.setText(command.getMetka());
-        uslovieField.setValue(command.getUslovie());
-        // todo заменить
+        //uslovieField.setValue(command.getUslovie());
+
+        if (!command.getUslovie().contains(" ")) {
+            uslovieFieldCenter.setValue(command.getUslovie());
+        } else {
+            uslovieFieldLeft.setValue(command.getUslovie().split(" ")[0]);
+            uslovieFieldCenter.setValue(command.getUslovie().split(" ")[1]);
+            uslovieFieldRight.setValue(command.getUslovie().split(" ")[2]);
+        }
+        
         if (command.getLinop().equals("*")) {
             linopFieldCenter.setValue("*");
         } else if (command.getLinop().length() != 0) {
@@ -152,15 +209,26 @@ public class addNewLineController {
     private void handleOk() {
         if(isInputValid()) {
             command.setMetka(metkaField.getText());
-            command.setUslovie(uslovieField.getValue().toString());
-            // todo заменить
-            // System.out.println(linopField.getText());
+
+            // Проверяем, пусты или нет левое и правое поля
+
+            boolean uslovieLeftEmpty = uslovieFieldLeft.getValue() == null || uslovieFieldLeft.getValue().toString().length() == 0;
+            boolean uslovieRightEmpty = uslovieFieldRight.getValue() == null || uslovieFieldRight.getValue().toString().length() == 0;
+
+            if (uslovieLeftEmpty && uslovieRightEmpty) {
+                command.setUslovie(uslovieFieldCenter.getValue().toString());
+            } else {
+                command.setUslovie(uslovieFieldLeft.getValue().toString() + " " + uslovieFieldCenter.getValue().toString()
+                        + " " + uslovieFieldRight.getValue().toString());
+            }
+            
             if (linopFieldCenter.getValue().toString().equals("*")) {
                 command.setLinop(linopFieldCenter.getValue().toString());
             } else {
                 command.setLinop(linopFieldLeft.getValue().toString() + " " + linopFieldCenter.getValue().toString()
                         + " " + linopFieldRight.getValue().toString());
             }
+            
             command.setMetkaPerehoda(metkaPerehodaField.getValue().toString());
             command.setComments(commentsArea.getText());
             okClicked = true;
@@ -178,16 +246,24 @@ public class addNewLineController {
         String errorMessage = "";
 
         boolean metkaNotEmpty = !(metkaField.getText() == null || metkaField.getText().length() == 0);
-        boolean uslovieNotEmpty = !(uslovieField.getValue().toString() == null || uslovieField.getValue().toString().length() == 0);
-        // todo заменить
+        
+        //boolean uslovieNotEmpty = !(uslovieField.getValue().toString() == null || uslovieField.getValue().toString().length() == 0);
+
+        boolean uslovieLeftNotEmpty = !(uslovieFieldLeft.getValue() == null || uslovieFieldLeft.getValue().toString().length() == 0);
+        boolean uslovieCenterNotEmpty = !(uslovieFieldCenter.getValue() == null || uslovieFieldCenter.getValue().toString().length() == 0);
+        boolean uslovieRightNotEmpty = !(uslovieFieldRight.getValue() == null || uslovieFieldRight.getValue().toString().length() == 0);
+
+        boolean uslovieIsOkay = (uslovieLeftNotEmpty && uslovieCenterNotEmpty && uslovieRightNotEmpty) || uslovieCenterNotEmpty;
+        
         boolean linopLeftNotEmpty = !(linopFieldLeft.getValue() == null || linopFieldLeft.getValue().toString().length() == 0);
         boolean linopCenterNotEmpty = !(linopFieldCenter.getValue() == null || linopFieldCenter.getValue().toString().length() == 0);
         boolean linopRightNotEmpty = !(linopFieldRight.getValue() == null || linopFieldRight.getValue().toString().length() == 0);
+        
         boolean linopIsOkay = (linopLeftNotEmpty && linopCenterNotEmpty && linopRightNotEmpty) || linopFieldCenter.getValue().toString().equals("*");
 
         if (linopIsOkay) {
             command.setFlag(Flags.OPERATOR);
-            if (uslovieNotEmpty) {
+            if (uslovieIsOkay) {
                 command.setFlag(Flags.CONDITION);
                 command.setPredicateType(determinePredicateType());
                 if (metkaNotEmpty) {
@@ -219,7 +295,7 @@ public class addNewLineController {
     }
 
     private PredicateTypes determinePredicateType() {
-        String value = uslovieField.getValue().toString();
+        String value = uslovieFieldCenter.getValue().toString();
         if (memoryOptions.contains(value)) {
             return PredicateTypes.MEMORY;
         } else if (alphabetOptions.contains(value)) {

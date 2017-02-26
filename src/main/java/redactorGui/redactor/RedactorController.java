@@ -1,8 +1,11 @@
 package redactorGui.redactor;
 
+import com.google.common.io.Resources;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import redactorGui.RedactorModule;
 import redactorGui.redactor.addNewLine.addNewLineController;
 import javafx.fxml.FXML;
@@ -43,6 +46,14 @@ public class RedactorController {
     @FXML
     private TableColumn<Command, String> commentsColumn;
 
+    @FXML
+    private Button addButton;
+
+    @FXML
+    private Button editButton;
+
+    @FXML
+    private Button deleteButton;
 
     private RedactorModule redactorModule;
 
@@ -53,6 +64,20 @@ public class RedactorController {
 
     @FXML
     private void initialize() {
+
+        try {
+            Image imageAdd = new Image(Resources.getResource("ic_add_box_black_24dp_1x.png").openStream());
+            addButton.setGraphic(new ImageView(imageAdd));
+
+            Image imageEdit = new Image(Resources.getResource("ic_edit_black_24dp_1x.png").openStream());
+            editButton.setGraphic(new ImageView(imageEdit));
+
+            Image imageDelete = new Image(Resources.getResource("ic_delete_black_24dp_1x.png").openStream());
+            deleteButton.setGraphic(new ImageView(imageDelete));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         metkaColumn.setCellValueFactory(cellData -> cellData.getValue().metkaProperty());
         uslovieColumn.setCellValueFactory(cellData -> cellData.getValue().uslovieProperty());
         linopColumn.setCellValueFactory(cellData -> cellData.getValue().linopProperty());
@@ -65,6 +90,18 @@ public class RedactorController {
             final ContextMenu contextMenu = new ContextMenu();
             MenuItem addAbove = new MenuItem("Добавить команду выше");
             MenuItem addBelow = new MenuItem("Добавить команду ниже");
+
+            try {
+                Image arrowUp = new Image(Resources.getResource("ic_arrow_upward_black_24dp_1x.png").openStream());
+                addAbove.setGraphic(new ImageView(arrowUp));
+
+                Image arrowDown = new Image(Resources.getResource("ic_arrow_downward_black_24dp_1x.png").openStream());
+                addBelow.setGraphic(new ImageView(arrowDown));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
 
             addAbove.setOnAction(event -> {
 

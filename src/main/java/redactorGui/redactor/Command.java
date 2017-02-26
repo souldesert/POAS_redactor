@@ -14,7 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Command {
 
     private final StringProperty metka;
+    // TODO: 13.02.2017 разбить условие на 3 части 
     private final StringProperty uslovie;
+    // TODO: 13.02.2017 разбить линейный оператор на 3 части 
     private final StringProperty linop;
     private final StringProperty metkaPerehoda;
     private final StringProperty comments;

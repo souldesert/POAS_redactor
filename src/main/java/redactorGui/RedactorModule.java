@@ -1,7 +1,10 @@
 package redactorGui;
 
+import com.google.common.io.Resources;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
 import redactorGui.alphabets.alphabetRecord;
 import redactorGui.alphabets.alphabetsController;
@@ -74,6 +77,7 @@ public class RedactorModule extends Application {
     public RedactorModule() {
         r_pro = new R_pro();
         r_pro.setProgname("Без названия");
+        // TODO: 13.02.2017 здесь добавить встроенные алфавиты, памяти 
 //        commandData.add(new Command()); // тестовая строка с командой
 //        commandData.add(new Command());
 //        commandData.add(new Command());
@@ -129,11 +133,12 @@ public class RedactorModule extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(RedactorModule.class.getClassLoader().getResource("redactor/Redactor.fxml"));
             AnchorPane redactor = (AnchorPane) loader.load();
-            // Помещаем сведения об адресатах в центр корневого макета.
-            redactorTab.setContent(redactor);
-            //Scene scene = new Scene(redactor);
-            //primaryStage.setScene(scene);
 
+            // Помещаем сведения о командах в центр корневого макета.
+            redactorTab.setContent(redactor);
+
+            Image redactorImage = new Image(Resources.getResource("ic_format_list_numbered_black_24dp_1x.png").openStream());
+            redactorTab.setGraphic(new ImageView(redactorImage));
 
             RedactorController controller = loader.getController();
             controller.setRedactorModule(this);
@@ -154,6 +159,9 @@ public class RedactorModule extends Application {
             memoryTypesTab.setContent(memoryTypes);
             //Scene scene = new Scene(redactor);
             //primaryStage.setScene(scene);
+
+            Image memoryImage = new Image(Resources.getResource("ic_memory_black_24dp_1x.png").openStream());
+            memoryTypesTab.setGraphic(new ImageView(memoryImage));
 
 
             memoryTypesController controller = loader.getController();
@@ -176,6 +184,8 @@ public class RedactorModule extends Application {
             //Scene scene = new Scene(redactor);
             //primaryStage.setScene(scene);
 
+            Image abcImage = new Image(Resources.getResource("ic_sort_by_alpha_black_24dp_1x.png").openStream());
+            alphabetsTab.setGraphic(new ImageView(abcImage));
 
             alphabetsController controller = loader.getController();
             controller.setRedactorModule(this);
