@@ -36,7 +36,7 @@ public class addNewLineController {
     @FXML
     private TextField metkaField;
 
-    // TODO: 13.02.2017 разбить на 3 ComboBox'a 
+    // TODO: 13.02.2017 разбить на 3 ComboBox'a
     @FXML
     private ComboBox uslovieFieldLeft;
 
@@ -56,7 +56,6 @@ public class addNewLineController {
 
     @FXML
     private ComboBox linopFieldRight;
-
 
     @FXML
     private ComboBox metkaPerehodaField;
@@ -181,20 +180,32 @@ public class addNewLineController {
         metkaField.setText(command.getMetka());
         //uslovieField.setValue(command.getUslovie());
 
-        if (!command.getUslovie().contains(" ")) {
-            uslovieFieldCenter.setValue(command.getUslovie());
+        /**
+         * Определяем, как данные из объекта Command вставить в поля окна добавления команды
+         */
+
+        String uslovieLeft = command.getUslovieLeft();
+        String uslovieCenter = command.getUslovieCenter();
+        String uslovieRight = command.getUslovieRight();
+
+        if (uslovieLeft.isEmpty() && uslovieRight.isEmpty()) {
+            uslovieFieldCenter.setValue(uslovieCenter);
         } else {
-            uslovieFieldLeft.setValue(command.getUslovie().split(" ")[0]);
-            uslovieFieldCenter.setValue(command.getUslovie().split(" ")[1]);
-            uslovieFieldRight.setValue(command.getUslovie().split(" ")[2]);
+            uslovieFieldLeft.setValue(uslovieLeft);
+            uslovieFieldCenter.setValue(uslovieCenter);
+            uslovieFieldRight.setValue(uslovieRight);
         }
+
+        String linopLeft = command.getLinopLeft();
+        String linopCenter = command.getLinopCenter();
+        String linopRight = command.getLinopRight();
         
-        if (command.getLinop().equals("*")) {
-            linopFieldCenter.setValue("*");
-        } else if (command.getLinop().length() != 0) {
-            linopFieldLeft.setValue(command.getLinop().split(" ")[0]);
-            linopFieldCenter.setValue(command.getLinop().split(" ")[1]);
-            linopFieldRight.setValue(command.getLinop().split(" ")[2]);
+        if (linopLeft.isEmpty() && linopRight.isEmpty()) {
+            linopFieldCenter.setValue(linopCenter);
+        } else {
+            linopFieldLeft.setValue(linopLeft);
+            linopFieldCenter.setValue(linopCenter);
+            linopFieldRight.setValue(linopRight);
         }
 
         metkaPerehodaField.setValue(command.getMetkaPerehoda());
@@ -216,17 +227,19 @@ public class addNewLineController {
             boolean uslovieRightEmpty = uslovieFieldRight.getValue() == null || uslovieFieldRight.getValue().toString().length() == 0;
 
             if (uslovieLeftEmpty && uslovieRightEmpty) {
-                command.setUslovie(uslovieFieldCenter.getValue().toString());
+                command.setUslovieCenter(uslovieFieldCenter.getValue().toString());
             } else {
-                command.setUslovie(uslovieFieldLeft.getValue().toString() + " " + uslovieFieldCenter.getValue().toString()
-                        + " " + uslovieFieldRight.getValue().toString());
+                command.setUslovieLeft(uslovieFieldLeft.getValue().toString());
+                command.setUslovieCenter(uslovieFieldCenter.getValue().toString());
+                command.setUslovieRight(uslovieFieldRight.getValue().toString());
             }
             
             if (linopFieldCenter.getValue().toString().equals("*")) {
-                command.setLinop(linopFieldCenter.getValue().toString());
+                command.setLinopCenter(linopFieldCenter.getValue().toString());
             } else {
-                command.setLinop(linopFieldLeft.getValue().toString() + " " + linopFieldCenter.getValue().toString()
-                        + " " + linopFieldRight.getValue().toString());
+                command.setLinopLeft(linopFieldLeft.getValue().toString());
+                command.setLinopCenter(linopFieldCenter.getValue().toString());
+                command.setLinopRight(linopFieldRight.getValue().toString());
             }
             
             command.setMetkaPerehoda(metkaPerehodaField.getValue().toString());

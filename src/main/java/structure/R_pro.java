@@ -55,22 +55,6 @@ public class R_pro {
         this.progname = progname;
     }
 
-//    public R_pro(String version, String progname, String comment, Descriptive_part descriptive_part, Alg alg) {
-//        this.version = version;
-//        this.progname = progname;
-//        this.comment = comment;
-//        this.descriptive_part = descriptive_part;
-//        this.alg = alg;
-//    }
-
-
-    // TEST
-//    public R_pro(String version, String progname, Descriptive_part descriptive_part) {
-//        this.version = version;
-//        this.progname = progname;
-//        this.descriptive_part = descriptive_part;
-//    }
-
     public R_pro() {
         progname = "Без названия";
     }

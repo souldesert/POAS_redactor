@@ -62,47 +62,26 @@ public class RedactorModuleController {
         alphabetsController alphabets = new alphabetsController();
     }
 
-
-    @FXML
-    private void handleAbout() {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle(";;;");
-        alert.setHeaderText("About");
-        alert.setContentText("Author: ;;;");
-
-        alert.showAndWait();
-    }
-
-    // TODO: 26.12.2016 Сделать сохранение уже открытого файла по запомненному пути 
-
-    @FXML
-    private void handleSave() {
+    void handleSave() {
 
         if (path == null) {
-            handleSaveAs();
+            handleSaveAs(path);
         } else {
             Saver saver = new Saver();
             saver.setKnownDestination(path);
             saver.save(redactorModule.getR_pro());
-            redactorModule.getPrimaryStage().setTitle(redactorModule.getR_pro().getProgname());
         }
     }
 
-    @FXML
-    private void handleSaveAs() {
+    boolean handleSaveAs(File fileToBeSaved) {
         Saver saver = new Saver();
-        if(saver.saveAs(redactorModule.getR_pro())) {
-            redactorModule.getPrimaryStage().setTitle(redactorModule.getR_pro().getProgname());
-        }
+        return saver.saveAs(redactorModule.getR_pro(), fileToBeSaved);
     }
 
-    // TODO: 26.12.2016 сделать очищение перед загрузкой новой программы 
-
-    @FXML
-    private void handleLoad() {
+    void handleLoad(File location) {
         Loader loader = new Loader();
-        if (loader.load()) {
-
+        if (loader.load(location)) {
+            redactorModule.clearR_pro();
             R_pro readed = loader.getReaded();
             redactorModule.updateR_pro(readed);
             path = loader.getLocation();
@@ -145,7 +124,7 @@ public class RedactorModuleController {
                         break;
                     case "Wagon":
                         record.setType("Вагон");
-                        record.setName(memory.getLeftName() + " | " + memory.getRightName());
+                        record.setName(String.format("%s | %s", memory.getLeftName(), memory.getRightName()));
                         break;
                     case "Table":
                         record.setType("Таблица");
@@ -181,30 +160,33 @@ public class RedactorModuleController {
                     String value;
                     String type = edge.getPredicate().getType();
 
-                    if (type.equals("memory")) {
-                        currentCommand.setPredicateType(PredicateTypes.MEMORY);
-                        value = edge.getPredicate().getContents();
-                        currentCommand.setUslovie(value);
-                    } else if (type.equals("alphabet")) {
-                        currentCommand.setPredicateType(PredicateTypes.ALPHABET);
-                        value = edge.getPredicate().getContents();
-                        currentCommand.setUslovie(value);
-                    } else if (type.equals("expression")) {
-                        currentCommand.setPredicateType(PredicateTypes.EXPRESSION);
-                        String memoryLeft = edge.getPredicate().getMemoryLeft().getName();
-                        String memoryRight = edge.getPredicate().getMemoryRight().getName();
-                        String sign = edge.getPredicate().getSign();
-                        currentCommand.setUslovie(memoryLeft + " " + sign + " " + memoryRight);
-                    } else {
-                        currentCommand.setPredicateType(PredicateTypes.STRING);
-                        value = edge.getPredicate().getContents();
-                        currentCommand.setUslovie(value);
+                    switch (type) {
+                        case "memory":
+                            currentCommand.setPredicateType(PredicateTypes.MEMORY);
+                            value = edge.getPredicate().getContents();
+                            currentCommand.setUslovieCenter(value);
+                            break;
+                        case "alphabet":
+                            currentCommand.setPredicateType(PredicateTypes.ALPHABET);
+                            value = edge.getPredicate().getContents();
+                            currentCommand.setUslovieCenter(value);
+                            break;
+                        case "expression":
+                            currentCommand.setPredicateType(PredicateTypes.EXPRESSION);
+                            String memoryLeft = edge.getPredicate().getMemoryLeft().getName();
+                            String memoryRight = edge.getPredicate().getMemoryRight().getName();
+                            String sign = edge.getPredicate().getSign();
+                            currentCommand.setUslovieLeft(memoryLeft);
+                            currentCommand.setUslovieCenter(sign);
+                            currentCommand.setUslovieRight(memoryRight);
+                            break;
+                        default:
+                            currentCommand.setPredicateType(PredicateTypes.STRING);
+                            value = edge.getPredicate().getContents();
+                            currentCommand.setUslovieCenter(value);
+                            break;
                     }
 
-//                String memoryLeft = edge.getPredicate().getMemoryLeft().getName();
-//                String memoryRight = edge.getPredicate().getMemoryRight().getName();
-//                String sign = edge.getPredicate().getSign();
-//                currentCommand.setUslovie(memoryLeft + " " + sign + " " + memoryRight);
                     if (currentCommand.getFlag() != Flags.TAG) {
                         currentCommand.setFlag(Flags.CONDITION);
                     }
@@ -212,7 +194,10 @@ public class RedactorModuleController {
                         String left = operation.getLeft().getValue();
                         String right = operation.getRight().getValue();
                         String operator = operation.getOperator();
-                        currentCommand.setLinop(left + " " + operator + " " + right);
+                        //currentCommand.setLinop(left + " " + operator + " " + right);
+                        currentCommand.setLinopLeft(left);
+                        currentCommand.setLinopCenter(operator);
+                        currentCommand.setLinopRight(right);
                         if (currentCommand.getFlag() != Flags.TAG && currentCommand.getFlag() != Flags.CONDITION)
                             currentCommand.setFlag(Flags.OPERATOR);
                         readedCommands.add(currentCommand);

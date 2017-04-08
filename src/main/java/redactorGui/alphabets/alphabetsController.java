@@ -1,6 +1,7 @@
 package redactorGui.alphabets;
 
 import com.google.common.io.Resources;
+import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -53,6 +54,10 @@ public class alphabetsController {
 
     private RedactorModule redactorModule;
 
+    public void clear() {
+        alphabetsTable.setItems(FXCollections.observableArrayList());
+    }
+
     @FXML
     private void initialize() {
         try {
@@ -89,7 +94,7 @@ public class alphabetsController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Редактирование синтерма");
             dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(redactorModule.getPrimaryStage());
+            //dialogStage.initOwner(redactorModule.getPrimaryStage());
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
 
@@ -115,7 +120,7 @@ public class alphabetsController {
             alphabetsTable.getItems().remove(selectedIndex);
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.initOwner(redactorModule.getPrimaryStage());
+            //alert.initOwner(redactorModule.getPrimaryStage());
             alert.setTitle("Ничего не выбрано");
             alert.setHeaderText("Не была выбрана ни одна запись");
             alert.setContentText("Пожалуйста, выберите запись в таблице");

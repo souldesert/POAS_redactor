@@ -1,6 +1,7 @@
 package redactorGui.memoryTypes;
 
 import com.google.common.io.Resources;
+import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -47,6 +48,10 @@ public class memoryTypesController {
 
     private RedactorModule redactorModule;
 
+    public void clear() {
+        memoryTypesTable.setItems(FXCollections.observableArrayList());
+    }
+
     @FXML
     private void initialize() {
         try {
@@ -81,7 +86,7 @@ public class memoryTypesController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Редактирование памяти");
             dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(redactorModule.getPrimaryStage());
+            dialogStage.initOwner(redactorModule.getRedactorPane().getScene().getWindow());
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
 
@@ -107,7 +112,7 @@ public class memoryTypesController {
             memoryTypesTable.getItems().remove(selectedIndex);
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.initOwner(redactorModule.getPrimaryStage());
+            alert.initOwner(redactorModule.getRedactorPane().getScene().getWindow());
             alert.setTitle("Ничего не выбрано");
             alert.setHeaderText("Не была выбрана ни одна запись");
             alert.setContentText("Пожалуйста, выберите запись в таблице");

@@ -2,6 +2,7 @@ package xml;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -27,13 +28,7 @@ public class Saver {
 
     private File knownDestination;
 
-    public boolean saveAs(R_pro r_pro) {
-        Stage saveStage = new Stage();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        fileChooser.setTitle("Сохранить программу");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Программа Р-тран", "*.rtran"));
-        File destination = fileChooser.showSaveDialog(saveStage);
+    public boolean saveAs(R_pro r_pro, File destination) {
         if (destination != null) {
             String progname = StringUtils.removeEnd(destination.getName(), ".rtran");
             r_pro.setProgname(progname);
@@ -42,17 +37,26 @@ public class Saver {
             XmlMapper xmlMapper = new XmlMapper(module);
             try {
                 xmlMapper.writeValue(destination, r_pro);
-                System.out.println("Сохранено успешно!");
+                Alert successWindow = new Alert(Alert.AlertType.CONFIRMATION);
+                successWindow.setTitle("Сохранение файла");
+                successWindow.setHeaderText("Файл сохранен");
+                successWindow.setContentText("Сохранение прошло успешно!");
+                successWindow.showAndWait();
+                return true;
             } catch (IOException e) {
-                System.out.println("I/O Error: " + e);
+                Alert fileIOErrorWindow = new Alert(Alert.AlertType.ERROR);
+                fileIOErrorWindow.setTitle("Сохранение файла");
+                fileIOErrorWindow.setHeaderText("При сохранении файла произошла ошибка!");
+                fileIOErrorWindow.setContentText(e.getMessage());
+                fileIOErrorWindow.showAndWait();
+                return false;
             }
-            return true;
         } else {
             return false;
         }
     }
     
-    public void save(R_pro r_pro) {
+    public boolean save(R_pro r_pro) {
         String progname = StringUtils.removeEnd(knownDestination.getName(), ".rtran");
         r_pro.setProgname(progname);
         JacksonXmlModule module = new JacksonXmlModule();
@@ -60,9 +64,19 @@ public class Saver {
         XmlMapper xmlMapper = new XmlMapper(module);
         try {
             xmlMapper.writeValue(knownDestination, r_pro);
-            System.out.println("Сохранено успешно!");
+            Alert successWindow = new Alert(Alert.AlertType.CONFIRMATION);
+            successWindow.setTitle("Сохранение файла");
+            successWindow.setHeaderText("Файл сохранен");
+            successWindow.setContentText("Сохранение прошло успешно!");
+            successWindow.showAndWait();
+            return true;
         } catch (IOException e) {
-            System.out.println("I/O Error: " + e);
+            Alert fileIOErrorWindow = new Alert(Alert.AlertType.ERROR);
+            fileIOErrorWindow.setTitle("Сохранение файла");
+            fileIOErrorWindow.setHeaderText("При сохранении файла произошла ошибка!");
+            fileIOErrorWindow.setContentText(e.getMessage());
+            fileIOErrorWindow.showAndWait();
+            return false;
         }
     }
     

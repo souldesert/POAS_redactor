@@ -1,6 +1,8 @@
 package redactorGui.redactor;
 
 import com.google.common.io.Resources;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
@@ -60,6 +62,10 @@ public class RedactorController {
     private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
 
     public RedactorController() {
+    }
+
+    public void clear() {
+        commandTable.setItems(FXCollections.observableArrayList());
     }
 
     @FXML
@@ -194,7 +200,7 @@ public class RedactorController {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Редактирование команды");
             dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(redactorModule.getPrimaryStage());
+            dialogStage.initOwner(redactorModule.getRedactorPane().getScene().getWindow());
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
 
@@ -221,7 +227,7 @@ public class RedactorController {
             commandTable.getItems().remove(selectedIndex);
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.initOwner(redactorModule.getPrimaryStage());
+            alert.initOwner(redactorModule.getRedactorPane().getScene().getWindow());
             alert.setTitle("Ничего не выбрано");
             alert.setHeaderText("Не была выбрана ни одна команда");
             alert.setContentText("Пожалуйста, выберите команду в таблице");
@@ -248,10 +254,33 @@ public class RedactorController {
     @FXML
     private void handleEditCommand() {
 
-        Command selectedCommand = commandTable.getSelectionModel().getSelectedItem();
-        showCommandEditDialog(selectedCommand);
-        R_pro updated = new R_pro("1.0", redactorModule.getR_pro().getProgname(), redactorModule.getDescriptive_part(), redactorModule.getAlg());
-        redactorModule.updateR_pro(updated);
+        int selectedIndex = commandTable.getSelectionModel().getSelectedIndex();
+        if (selectedIndex >= 0) {
+            Command selectedCommand = commandTable.getSelectionModel().getSelectedItem();
+            boolean okClicked = showCommandEditDialog(selectedCommand);
+            if(okClicked) {
+                redactorModule.getCommandData().set(selectedIndex, selectedCommand);
+                //redactorModule.getCommandData().add(tempCommand);
+            }
+            R_pro updated = new R_pro("1.0", redactorModule.getR_pro().getProgname(), redactorModule.getDescriptive_part(), redactorModule.getAlg());
+            redactorModule.updateR_pro(updated);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(redactorModule.getRedactorPane().getScene().getWindow());
+            alert.setTitle("Ничего не выбрано");
+            alert.setHeaderText("Не была выбрана ни одна команда");
+            alert.setContentText("Пожалуйста, выберите команду в таблице");
+            alert.showAndWait();
+        }
+
+//        R_pro updated = new R_pro("1.0", redactorModule.getR_pro().getProgname(), redactorModule.getDescriptive_part(), redactorModule.getAlg());
+//        redactorModule.updateR_pro(updated);
+
+//        Command selectedCommand = commandTable.getSelectionModel().getSelectedItem();
+//        System.out.println(selectedCommand.uslovieProperty().get());
+//        showCommandEditDialog(selectedCommand);
+//        R_pro updated = new R_pro("1.0", redactorModule.getR_pro().getProgname(), redactorModule.getDescriptive_part(), redactorModule.getAlg());
+//        redactorModule.updateR_pro(updated);
 
     }
 

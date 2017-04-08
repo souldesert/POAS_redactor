@@ -1,10 +1,14 @@
 package redactorGui;
 
 import com.google.common.io.Resources;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.StringUtils;
 import redactorGui.alphabets.alphabetRecord;
 import redactorGui.alphabets.alphabetsController;
@@ -23,20 +27,25 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import structure.*;
+import xml.Loader;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RedactorModule extends Application {
+public class RedactorModule {
 
 
     private Tab redactorTab;
     private Tab memoryTypesTab;
     private Tab alphabetsTab;
-    private Stage primaryStage;
-    private BorderPane RootWindow;
+    private AnchorPane redactorPane;
+    private RedactorModuleController controller;
 
+    public AnchorPane getRedactorPane() {
+        return redactorPane;
+    }
 
     public void setCommandData(ObservableList<Command> commandData) {
         this.commandData = commandData;
@@ -56,34 +65,40 @@ public class RedactorModule extends Application {
         this.r_pro = r_pro;
     }
 
-    
+    void clearR_pro() {
+        commandData.clear();
+        memoryTypesData.clear();
+        alphabetsData.clear();
+    }
+
+    public void load(File file) {
+        controller.handleLoad(file);
+    }
+
+    public void save() {
+        controller.handleSave();
+    }
+
+    public void saveAs(File destination) {
+        controller.handleSaveAs(destination);
+    }
     
 
-    public void setRedactorTab(Tab redactorTab) {
+    void setRedactorTab(Tab redactorTab) {
         this.redactorTab = redactorTab;
     }
 
-    public void setMemoryTypesTab(Tab memoryTypesTab) {
+    void setMemoryTypesTab(Tab memoryTypesTab) {
         this.memoryTypesTab = memoryTypesTab;
     }
 
-    public void setAlphabetsTab(Tab alphabetsTab) {
+    void setAlphabetsTab(Tab alphabetsTab) {
         this.alphabetsTab = alphabetsTab;
     }
-    
-    
-
 
     public RedactorModule() {
         r_pro = new R_pro();
         r_pro.setProgname("Без названия");
-        // TODO: 13.02.2017 здесь добавить встроенные алфавиты, памяти 
-//        commandData.add(new Command()); // тестовая строка с командой
-//        commandData.add(new Command());
-//        commandData.add(new Command());
-//        commandData.add(new Command());
-//        commandData.add(new Command());
-//        commandData.add(new Command());
     }
 
     public ObservableList<Command> getCommandData() {
@@ -92,47 +107,48 @@ public class RedactorModule extends Application {
     public ObservableList<memoryTypeRecord> getMemoryTypesData() { return memoryTypesData; }
     public ObservableList<alphabetRecord> getAlphabetsData() { return alphabetsData; }
 
-
-    @Override
-    public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        //this.primaryStage.setTitle("R_tran");
-
-        initRootWindow();
+    public void init(AnchorPane availableArea) {
+        this.redactorPane = availableArea;
+        initRedactorPane();
         showRedactor();
         showMemoryTypes();
         showAlphabets();
-        this.getPrimaryStage().show();
-        //showTreeLeft();
     }
 
-    public void initRootWindow() {
+    public void init(AnchorPane availableArea, File fileToBeOpened) {
+        this.init(availableArea);
+        load(fileToBeOpened);
+    }
+
+
+    private void initRedactorPane() {
         try {
             // Загружаем корневой макет из fxml файла.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(RedactorModule.class.getClassLoader().getResource("RedactorWindow.fxml"));
-            RootWindow = (BorderPane) loader.load();
+            loader.setLocation(Resources.getResource("RedactorWindow.fxml"));
+            TabPane tabs = loader.load();
+            redactorPane.getChildren().add(tabs);
+            //redactorPane = (AnchorPane) ((BorderPane) ).getCenter();
             // Отображаем сцену, содержащую корневой макет.
-            Scene scene = new Scene(RootWindow);
-            primaryStage.setScene(scene);
-            primaryStage.setTitle(r_pro.getProgname());
+//            Scene scene = new Scene(redactorPane);
+//            primaryStage.setScene(scene);
+//            primaryStage.setTitle(r_pro.getProgname());
 
             // Give the controller access to the main app.
-            RedactorModuleController controller = loader.getController();
+            controller = loader.getController();
             controller.setRedactorModule(this);
 
-            //primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
-    //Redactor
+
     private void showRedactor() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(RedactorModule.class.getClassLoader().getResource("redactor/Redactor.fxml"));
-            AnchorPane redactor = (AnchorPane) loader.load();
+            loader.setLocation(Resources.getResource("redactor/Redactor.fxml"));
+            AnchorPane redactor = loader.load();
 
             // Помещаем сведения о командах в центр корневого макета.
             redactorTab.setContent(redactor);
@@ -140,10 +156,9 @@ public class RedactorModule extends Application {
             Image redactorImage = new Image(Resources.getResource("ic_format_list_numbered_black_24dp_1x.png").openStream());
             redactorTab.setGraphic(new ImageView(redactorImage));
 
-            RedactorController controller = loader.getController();
-            controller.setRedactorModule(this);
+            RedactorController redactorController = loader.getController();
+            redactorController.setRedactorModule(this);
 
-            //primaryStage.show();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -153,21 +168,17 @@ public class RedactorModule extends Application {
     private void showMemoryTypes() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(RedactorModule.class.getClassLoader().getResource("memoryTypes/memoryTypes.fxml"));
-            AnchorPane memoryTypes = (AnchorPane) loader.load();
-            // Помещаем сведения об адресатах в центр корневого макета.
+            loader.setLocation(Resources.getResource("memoryTypes/memoryTypes.fxml"));
+            AnchorPane memoryTypes = loader.load();
+
             memoryTypesTab.setContent(memoryTypes);
-            //Scene scene = new Scene(redactor);
-            //primaryStage.setScene(scene);
 
             Image memoryImage = new Image(Resources.getResource("ic_memory_black_24dp_1x.png").openStream());
             memoryTypesTab.setGraphic(new ImageView(memoryImage));
 
 
-            memoryTypesController controller = loader.getController();
-            controller.setRedactorModule(this);
-
-            //primaryStage.show();
+            memoryTypesController memoryController = loader.getController();
+            memoryController.setRedactorModule(this);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -177,20 +188,15 @@ public class RedactorModule extends Application {
     private void showAlphabets() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(RedactorModule.class.getClassLoader().getResource("alphabets/alphabets.fxml"));
-            AnchorPane alphabets = (AnchorPane) loader.load();
-            // Помещаем сведения об адресатах в центр корневого макета.
+            loader.setLocation(Resources.getResource("alphabets/alphabets.fxml"));
+            AnchorPane alphabets = loader.load();
             alphabetsTab.setContent(alphabets);
-            //Scene scene = new Scene(redactor);
-            //primaryStage.setScene(scene);
 
             Image abcImage = new Image(Resources.getResource("ic_sort_by_alpha_black_24dp_1x.png").openStream());
             alphabetsTab.setGraphic(new ImageView(abcImage));
 
-            alphabetsController controller = loader.getController();
-            controller.setRedactorModule(this);
-
-            //primaryStage.show();
+            alphabetsController abcController = loader.getController();
+            abcController.setRedactorModule(this);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -222,7 +228,7 @@ public class RedactorModule extends Application {
         return memory;
     }
 
-    public ObservableList<Abc> getAbcs() {
+    private ObservableList<Abc> getAbcs() {
         ObservableList<Abc> abcs = FXCollections.observableArrayList();
         for(alphabetRecord record : alphabetsData) {
             abcs.add(new Abc(record.getName(), record.getShortName(), record.getComments(), record.getValues()));
@@ -233,14 +239,14 @@ public class RedactorModule extends Application {
     public Descriptive_part getDescriptive_part() {
         Memory_block memory_block = new Memory_block(getMemory());
         Alphabet alphabet = new Alphabet(getAbcs());
-        Descriptive_part descriptive_part = new Descriptive_part(memory_block, alphabet);
-        return descriptive_part;
+        return new Descriptive_part(memory_block, alphabet);
     }
 
-    // TODO: 26.12.2016 Решить вопрос с пробелами при разборе линопа - в текущей версии все они удаляются
-
     private Operation getOperation(Command record) {
-        String linop = record.getLinop();
+        String linopLeft = record.getLinopLeft();
+        String linopCenter = record.getLinopCenter();
+        String linopRight = record.getLinopRight();
+
         Left left = new Left();
         String operator = "";
         Right right = new Right();
@@ -277,12 +283,13 @@ public class RedactorModule extends Application {
         knownOperators.add("!=");
 
         for(String oper : knownOperators) {
-            if (linop.contains(oper)) {
-                String stripped = StringUtils.remove(linop, " ");
-                String[] tokens = stripped.split(oper);
-                left = new Left(tokens[0]);
+            if (linopCenter.equals(oper)) {
+                left = new Left(linopLeft);
                 operator = oper;
-                right = new Right(tokens[1]);
+
+                // Правая часть (содержащая выражение) не будет содержать в себе пробелов:
+
+                right = new Right(StringUtils.remove(linopRight, " "));
                 break;
             }
         }
@@ -295,39 +302,13 @@ public class RedactorModule extends Application {
         int curArm = -1;
         int curEdge = 0;
         for (Command record : commandData) {
-            String type;
             Predicate predicate;
             switch (record.getFlag()) {
                 case TAG:
 
-//                    Left left = new Left(record.getLinop().split(" ")[0]);
-//                    String operator = record.getLinop().split(" ")[1];
-//                    Right right = new Right(record.getLinop().split(" ")[2]);
-//                    Operation operation = new Operation(left, operator, right);
-
                     Operation operation = getOperation(record);
 
-                    switch (record.getPredicateType()) {
-                        case ALPHABET:
-                            type = "alphabet";
-                            predicate = new Predicate(type, record.getUslovie());
-                            break;
-                        case EXPRESSION:
-                            type = "expression";
-                            Memory memoryLeft = new Memory(record.getUslovie().split(" ")[0]);
-                            String sign = record.getUslovie().split(" ")[1];
-                            Memory memoryRight = new Memory(record.getUslovie().split(" ")[2]);
-                            predicate = new Predicate(type, memoryLeft, sign, memoryRight);
-                            break;
-                        case MEMORY:
-                            type = "memory";
-                            predicate = new Predicate(type, record.getUslovie());
-                            break;
-                        default:
-                            type = "string";
-                            predicate = new Predicate(type, record.getUslovie());
-                            break;
-                    }
+                    predicate = getPredicate(record);
 
                     curEdge = 0;
 
@@ -338,41 +319,13 @@ public class RedactorModule extends Application {
                     arm.addEdge(edge);
                     alg.addArm(arm);
                     curArm++;
-
-                    System.out.println(record.getFlag() + ". Записано: " + curArm + curEdge + " " + record.getLinop());
-
                     break;
 
                 case CONDITION:
 
-//                    left = new Left(record.getLinop().split(" ")[0]);
-//                    operator = record.getLinop().split(" ")[1];
-//                    right = new Right(record.getLinop().split(" ")[2]);
-//                    operation = new Operation(left, operator, right);
-
                     operation = getOperation(record);
 
-                    switch (record.getPredicateType()) {
-                        case ALPHABET:
-                            type = "alphabet";
-                            predicate = new Predicate(type, record.getUslovie());
-                            break;
-                        case EXPRESSION:
-                            type = "expression";
-                            Memory memoryLeft = new Memory(record.getUslovie().split(" ")[0]);
-                            String sign = record.getUslovie().split(" ")[1];
-                            Memory memoryRight = new Memory(record.getUslovie().split(" ")[2]);
-                            predicate = new Predicate(type, memoryLeft, sign, memoryRight);
-                            break;
-                        case MEMORY:
-                            type = "memory";
-                            predicate = new Predicate(type, record.getUslovie());
-                            break;
-                        default:
-                            type = "string";
-                            predicate = new Predicate(type, record.getUslovie());
-                            break;
-                    }
+                    predicate = getPredicate(record);
 
                     curEdge++;
 
@@ -380,21 +333,9 @@ public class RedactorModule extends Application {
                     edge.addEnd(record.getMetkaPerehoda());
 
                     alg.getArm(curArm).addEdge(edge);
-
-                    System.out.println(record.getFlag() + ". Записано: " + curArm + curEdge + " " + record.getLinop());
-
-//                    Arm currentArm = alg.getArm(curArm);
-//                    currentArm.addEdge(edge);
-//                    alg.updateArm(currentArm);
-
                     break;
 
                 case OPERATOR:
-
-//                    left = new Left(record.getLinop().split(" ")[0]);
-//                    operator = record.getLinop().split(" ")[1];
-//                    right = new Right(record.getLinop().split(" ")[2]);
-//                    operation = new Operation(left, operator, right);
 
                     operation = getOperation(record);
 
@@ -407,14 +348,32 @@ public class RedactorModule extends Application {
         return alg;
     }
 
-    public Stage getPrimaryStage() {
-        return primaryStage;
+    private Predicate getPredicate(Command record) {
+        String type;
+        Predicate predicate;
+        switch (record.getPredicateType()) {
+            case ALPHABET:
+                type = "alphabet";
+                predicate = new Predicate(type, record.getUslovieCenter());
+                break;
+            case EXPRESSION:
+                type = "expression";
+                Memory memoryLeft = new Memory(record.getUslovieLeft());
+                String sign = record.getUslovieCenter();
+                Memory memoryRight = new Memory(record.getUslovieRight());
+                predicate = new Predicate(type, memoryLeft, sign, memoryRight);
+                break;
+            case MEMORY:
+                type = "memory";
+                predicate = new Predicate(type, record.getUslovieCenter());
+                break;
+            default:
+                type = "string";
+                predicate = new Predicate(type, record.getUslovieCenter());
+                break;
+        }
+        return predicate;
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
 
 
 }

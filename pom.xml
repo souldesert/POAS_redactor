@@ -66,11 +66,13 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <!--Так как *.fxml файлы лежат у нас не в resources, указываем джяве, что их можно брать еще и отсюда:-->
         <resources>
             <resource>
                 <directory>${basedir}/src/main/java/redactorGui</directory>
                 <includes>
-                    <include>**/*</include>
+                    <include>**/*.fxml</include>
                 </includes>
             </resource>
         </resources>
