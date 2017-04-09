@@ -1,13 +1,6 @@
 # POAS_redactor
 *Модуль редактора*
 
-## Создание модуля редактора
-```java
-AnchorPane redactorPane = new AnchorPane();
-RedactorModule redactorModule = new RedactorModule();
-redactorModule.init(redactorPane);
-```
-
 ## Создание модуля редактора (с открытием программы из файла)
 ```java
 AnchorPane redactorPane = new AnchorPane();
