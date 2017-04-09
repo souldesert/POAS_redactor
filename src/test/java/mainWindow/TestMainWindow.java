@@ -37,8 +37,9 @@ public class TestMainWindow extends Application {
          */
 
         AnchorPane redactorPane = new AnchorPane();
+
         RedactorModule redactorModule = new RedactorModule();
-        File rTranProgram = new File(Resources.getResource("Test.rtran").getFile());
+        File rTranProgram = new File(Resources.getResource("empty.rtran").getFile());
         redactorModule.init(redactorPane, rTranProgram);
 
         /**
@@ -67,7 +68,9 @@ public class TestMainWindow extends Application {
         this.getPrimaryStage().setScene(scene);
         this.getPrimaryStage().show();
 
-        redactorModule.save();
+        //redactorModule.load(new File(Resources.getResource("empty.rtran").getFile()));
+
+        //redactorModule.save();
     }
 
     private ObservableList<Tab> createBottomTabs() {

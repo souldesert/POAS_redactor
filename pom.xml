@@ -67,6 +67,7 @@
             </plugin>
         </plugins>
 
+
         <!--Так как *.fxml файлы лежат у нас не в resources, указываем джяве, что их можно брать еще и отсюда:-->
         <resources>
             <resource>

@@ -33,13 +33,7 @@ public class Loader {
     public Loader() {
     }
 
-    public boolean load(File location) {
-//        Stage loadStage = new Stage();
-//        FileChooser fileChooser = new FileChooser();
-//        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-//        fileChooser.setTitle("Открыть программу");
-//        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Программа Р-тран", "*.rtran"));
-        //File destination = fileChooser.showOpenDialog(loadStage);
+    public LoadingResult load(File location) {
         this.location = location;
         if (location != null) {
             JacksonXmlModule module = new JacksonXmlModule();
@@ -50,19 +44,20 @@ public class Loader {
                 String program = read.readLine();
                 readed = xmlMapper.readValue(program, R_pro.class);
             } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            } catch (NullPointerException e) {
                 Alert emptyFileErrorWindow = new Alert(Alert.AlertType.ERROR);
                 emptyFileErrorWindow.setTitle("Ошибка открытия файла");
                 emptyFileErrorWindow.setHeaderText("При открытии файла произошла ошибка!");
-                emptyFileErrorWindow.setContentText("Файл пуст!");
+                emptyFileErrorWindow.setContentText("Файл поврежден!");
                 emptyFileErrorWindow.showAndWait();
-                return false;
+                //e.printStackTrace();
+                return LoadingResult.BROKEN;
+            } catch (NullPointerException e) {
+                //System.out.println(this);
+                return LoadingResult.EMPTY;
             }
-            return true;
+            return LoadingResult.SUCCESS;
         } else {
-            return false;
+            return LoadingResult.NULL;
         }
     }
 

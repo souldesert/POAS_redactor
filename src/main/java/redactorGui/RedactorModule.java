@@ -107,16 +107,11 @@ public class RedactorModule {
     public ObservableList<memoryTypeRecord> getMemoryTypesData() { return memoryTypesData; }
     public ObservableList<alphabetRecord> getAlphabetsData() { return alphabetsData; }
 
-    public void init(AnchorPane availableArea) {
+    public void init(AnchorPane availableArea, File fileToBeOpened) {
         this.redactorPane = availableArea;
         initRedactorPane();
         showRedactor();
         showMemoryTypes();
-        showAlphabets();
-    }
-
-    public void init(AnchorPane availableArea, File fileToBeOpened) {
-        this.init(availableArea);
         load(fileToBeOpened);
     }
 
@@ -127,14 +122,11 @@ public class RedactorModule {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(Resources.getResource("RedactorWindow.fxml"));
             TabPane tabs = loader.load();
+            AnchorPane.setBottomAnchor(tabs, 0.0);
+            AnchorPane.setTopAnchor(tabs, 0.0);
+            AnchorPane.setLeftAnchor(tabs, 0.0);
+            AnchorPane.setRightAnchor(tabs, 0.0);
             redactorPane.getChildren().add(tabs);
-            //redactorPane = (AnchorPane) ((BorderPane) ).getCenter();
-            // Отображаем сцену, содержащую корневой макет.
-//            Scene scene = new Scene(redactorPane);
-//            primaryStage.setScene(scene);
-//            primaryStage.setTitle(r_pro.getProgname());
-
-            // Give the controller access to the main app.
             controller = loader.getController();
             controller.setRedactorModule(this);
 

@@ -16,6 +16,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Tab;
 import structure.*;
 import xml.Loader;
+import xml.LoadingResult;
 import xml.Saver;
 
 import java.io.File;
@@ -80,7 +81,8 @@ public class RedactorModuleController {
 
     void handleLoad(File location) {
         Loader loader = new Loader();
-        if (loader.load(location)) {
+        LoadingResult loadingResult = loader.load(location);
+        if (loadingResult == LoadingResult.SUCCESS) {
             redactorModule.clearR_pro();
             R_pro readed = loader.getReaded();
             redactorModule.updateR_pro(readed);
@@ -88,6 +90,9 @@ public class RedactorModuleController {
             insertAlg(readed);
             insertMemory(readed);
             insertAbc(readed);
+        } else if (loadingResult == LoadingResult.EMPTY) {
+            redactorModule.clearR_pro();
+            path = loader.getLocation();
         }
     }
 
